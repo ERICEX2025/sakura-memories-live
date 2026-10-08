@@ -115,7 +115,10 @@ function World({
   const lw2 = useLingbotWorld2();
   const lw2Ref = useRef(lw2);
   lw2Ref.current = lw2;
-  const [stage, setStage] = useState<"connecting" | "building" | "walking" | "failed">("connecting");
+  const [stage, setStage] = useState<"connecting" | "building" | "walking" | "busy" | "failed">("connecting");
+  // At a busy event the GPU pool can be full (429): keep the painted scene
+  // alive and keep trying until a world-model GPU frees up.
+  const [connectTick, setConnectTick] = useState(0);
   const [video, setVideo] = useState(false);
   const startedRef = useRef(false);
   const movingRef = useRef<Move>("idle");
@@ -124,15 +127,19 @@ function World({
   // The provider connects on mount; if it is still disconnected a few
   // seconds later, ask again.
   useEffect(() => {
-    if (lw2.status !== "disconnected" || startedRef.current) return;
+    if (lw2.status !== "disconnected") return;
+    // A dropped session has to build its world again once it reconnects.
+    builtRef.current = null;
+    setVideo(false);
     const timer = setTimeout(() => {
       void lw2Ref.current.connect().catch((error: unknown) => {
         setFailure(error instanceof Error ? error.message : String(error));
-        setStage("failed");
+        setStage("busy");
+        setTimeout(() => setConnectTick((t) => t + 1), 12_000);
       });
-    }, 3000);
+    }, connectTick === 0 ? 3000 : 0);
     return () => clearTimeout(timer);
-  }, [lw2.status]);
+  }, [lw2.status, connectTick]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Build the world from the anchor once the session is ready, and rebuild it
   // in place (same session, so seconds instead of a fresh connect) whenever
@@ -164,12 +171,9 @@ function World({
         }
       } catch (error) {
         setFailure(error instanceof Error ? error.message : String(error));
-        if (attempt < 3) {
-          builtRef.current = null;
-          setTimeout(() => setAttempt((a) => a + 1), 2500);
-        } else {
-          setStage("failed");
-        }
+        builtRef.current = null;
+        setStage("busy");
+        setTimeout(() => setAttempt((a) => a + 1), Math.min(15_000, 2500 * 2 ** attempt));
       }
     })();
   }, [lw2.status, anchor, attempt]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -277,7 +281,14 @@ function World({
 
   return (
     <div className="walk-root">
-      <img key={anchor} src={anchor} alt="" className={`walk-layer object-cover transition-opacity duration-700 ${video ? "opacity-0" : "opacity-100"}`} />
+      <img key={anchor} src={anchor} alt="" className={`walk-layer ken-burns object-cover transition-opacity duration-700 ${video ? "opacity-0" : "opacity-100"}`} />
+      {!video && (
+        <div className="petals" aria-hidden>
+          {Array.from({ length: 14 }, (_, i) => (
+            <span key={i} style={{ left: `${(i * 37) % 100}%`, animationDelay: `${(i * 0.7) % 6}s`, animationDuration: `${7 + (i % 5)}s` }} />
+          ))}
+        </div>
+      )}
       <LingbotWorld2MainVideoView
         videoObjectFit="cover"
         className={`walk-layer transition-opacity duration-700 ${video ? "opacity-100" : "opacity-0"}`}
@@ -286,7 +297,11 @@ function World({
       {!controls && (
         <div className="world-badge">
           <span className={`h-1.5 w-1.5 rounded-full ${stage === "walking" && video ? "bg-emerald-400" : "bg-amber-300"}`} />
-          {stage === "walking" && video ? "Live world · WASD to explore · ← → to look" : "Generating the scene…"}
+          {stage === "walking" && video
+            ? "Live world · WASD to explore · ← → to look"
+            : stage === "busy"
+              ? "World model GPUs are busy · retrying…"
+              : "Generating the scene…"}
         </div>
       )}
       {controls && (
@@ -305,7 +320,9 @@ function World({
               ? attempt > 0
                 ? `Retrying the world… (${attempt}/3)`
                 : "Generating the street…"
-              : stage === "failed"
+              : stage === "busy"
+                ? "World-model GPUs are all busy right now · retrying automatically…"
+                : stage === "failed"
                 ? `The world model is busy right now${failure ? ` (${failure})` : ""}. Take the shortcut →`
                 : "W to walk · A/D to step aside · ← → to look around"}
         </div>

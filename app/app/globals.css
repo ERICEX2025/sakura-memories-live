@@ -294,3 +294,10 @@ button:disabled {
   box-shadow: 0 4px 10px rgb(0 0 0 / 0.3);
 }
 .memory-save:hover { background: #ff6b87; }
+/* While the world model is busy, the painted scene stays alive. */
+.ken-burns { animation: kenburns 24s ease-in-out infinite alternate; transform-origin: 60% 50%; }
+@keyframes kenburns { from { transform: scale(1.02) translate(0, 0) } to { transform: scale(1.12) translate(-2%, -1%) } }
+.petals { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 1; }
+.petals span { position: absolute; top: -5%; width: 12px; height: 9px; border-radius: 60% 0 60% 0; background: radial-gradient(circle at 30% 30%, #ffe4ec, #ffa8c0); opacity: 0.9; animation-name: petalfall; animation-timing-function: linear; animation-iteration-count: infinite; }
+@keyframes petalfall { 0% { transform: translate(0, 0) rotate(0) } 50% { transform: translate(-40px, 55vh) rotate(200deg) } 100% { transform: translate(30px, 110vh) rotate(420deg) } }
+@media (prefers-reduced-motion: reduce) { .ken-burns, .petals span { animation: none } }
