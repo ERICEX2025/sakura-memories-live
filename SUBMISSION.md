@@ -8,7 +8,7 @@
 - **Team name:** ERIC_EX (or your pick)
 - **Teammates:** Eric Ko, ericko110702@gmail.com
 - **One-line description:**
-  > My 2023 anime visual novel, rebuilt so its hand-drawn heroines video-call you live: Reactor Vidu S2 avatars that see and hear you, with a Gemini director that scores every line and rewrites the story mid-call.
+  > My 2023 anime visual novel, rebuilt so its hand-drawn heroines video-call you live (Reactor Vidu S2 avatars that see and hear you, with a Gemini director rewriting the story mid-call) and Saturday's date is a walkable LingBot World 2 world.
 - **Demo link:** backup video URL (YouTube unlisted or Drive), plus the live URL above
 - **Repo:** push to GitHub first, then paste the link (optional)
 - **Social post link:** X or LinkedIn (worth +1 extra credit)
@@ -29,6 +29,13 @@
 - `interrupt`: cuts her off when Tatsumi-sensei walks in.
 - `list_voices`, plus the transcript events that drive the director.
 - **Sprite mode (default):** to avoid the uncanny valley, the call shows her as hand-drawn keyframes (closed, half and open mouth, plus a blink), made from the original art with Nano Banana. Her live Reactor voice track (`main_audio`) drives the mouth: the browser measures its volume (Web Audio RMS) and picks the matching frame, so she lip-syncs to Reactor's audio. One click switches to Reactor's raw generated video, which also shows the live outfit change.
+
+**LingBot World 2 (`reactor/lingbot-world-2`), running as a second Reactor session beside the call:**
+- On Saturday you walk to the mall through a live generated world: `uploadFile`, then `setImage` with a painted cherry-blossom version of the original game's street, then `setPrompt`, then `start`.
+- WASD and the arrow keys map to `setMoveLongitudinal`, `setMoveLateral`, `setLookHorizontal` and `setLookVertical`.
+- Akari stays live on the phone in the corner and teases you to hurry ("osoi osoi~").
+- `setPrompt` is re-sent every 5 seconds to keep the world from drifting.
+- Arriving hands off to the mall chapter.
 
 **Google AI Studio:**
 - **Gemini 3.8 Flash** judges each exchange and returns:
@@ -55,7 +62,7 @@ Pre-record the 0:00 clip of the original Ren'Py build.
 | 0:25–0:35 | The phone rings and you click Answer. Akari picks up in the library, in hand-drawn sprite mode. | "…and she picks up. Reactor runs her live: her voice, her brain, her eyes on my camera. The mouth flaps are driven by her live voice track, so she stays in the original art style." |
 | 0:35–1:05 | Two exchanges: tease her, then offer boba. Hearts and reasons pop. | "Nothing is scripted. A Gemini director scores every line against the goal from my original script." |
 | 1:05–1:20 | Goal met. The scene changes to Tiger Sugar and her persona updates. Flip to 🎞️ Live video at the mall to show her outfit changing. | "Hit the goal and the director rewrites her persona mid-call with update_call. Here's the raw Reactor video: set_reference_images just put her in her date outfit." |
-| 1:20–1:35 | Optional: stall on purpose in the library so Tatsumi slides in. | "Stall and the world pushes back." |
+| 1:20–1:40 | Saturday: the screen becomes a LingBot World 2 street, generated from the original background with cherry blossoms. Hold W to walk while Akari teases you from the corner phone. | "And Saturday isn't a cutscene: it's a world model. I'm walking to the mall in a world generated from my old background, while she's still on the phone." |
 | 1:35–1:55 | Mall: she notices your outfit on camera, says "do we look like a couple? …just kidding". Ending card. | "A visual novel that actually hears you, sees you, and remembers." |
 | 1:55–2:00 | Title card | "Sakura Memories Live. Thank you." |
 
