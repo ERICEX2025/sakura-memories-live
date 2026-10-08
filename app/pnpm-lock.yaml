@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@reactor-models/lingbot-world-2':
+        specifier: ^1.0.1
+        version: 1.0.1(react@19.3.0)
       '@reactor-models/vidu-s2-avatar':
         specifier: 0.4.0
         version: 0.4.0(react@19.3.0)
@@ -290,6 +293,11 @@ packages:
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
+
+  '@reactor-models/lingbot-world-2@1.0.1':
+    resolution: {integrity: sha512-cfd5RXqGfxUsHA9GiHzaWs1JoYKgMOs+ViRj0o1+YvDlIvxAdb+vUYzBuQB10pvvustNcePtShmnQ7TDqfTv0A==}
+    peerDependencies:
+      react: '>=18'
 
   '@reactor-models/vidu-s2-avatar@0.4.0':
     resolution: {integrity: sha512-iiie15RKzn+tk7Fc8VwOoYN6u9bFs0g59y3sQAbaFsrHEwVdvK00eUe8TgUFaP9lcbGb41KeRCRVv0LPjQ10Jg==}
@@ -796,6 +804,13 @@ snapshots:
 
   '@next/swc-win32-x64-msvc@15.5.26':
     optional: true
+
+  '@reactor-models/lingbot-world-2@1.0.1(react@19.3.0)':
+    dependencies:
+      '@reactor-team/js-sdk': 3.0.2(react@19.3.0)
+      react: 19.3.0
+    transitivePeerDependencies:
+      - supports-color
 
   '@reactor-models/vidu-s2-avatar@0.4.0(react@19.3.0)':
     dependencies:

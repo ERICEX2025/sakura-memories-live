@@ -58,12 +58,18 @@ export function useAudio() {
   );
 }
 
+// One fade per element at a time: a newer fade cancels the older one.
+const fades = new WeakMap<HTMLAudioElement, number>();
+
 function fadeTo(audio: HTMLAudioElement, target: number, ms = 1200) {
   const start = audio.volume;
   const began = performance.now();
+  const token = (fades.get(audio) ?? 0) + 1;
+  fades.set(audio, token);
   const step = (now: number) => {
+    if (fades.get(audio) !== token) return;
     const t = Math.min(1, (now - began) / ms);
-    audio.volume = start + (target - start) * t;
+    audio.volume = Math.min(1, Math.max(0, start + (target - start) * t));
     if (t < 1) requestAnimationFrame(step);
   };
   requestAnimationFrame(step);

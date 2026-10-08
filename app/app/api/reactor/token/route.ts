@@ -27,7 +27,7 @@ export async function GET() {
       authorization_details: [
         {
           type: "session",
-          resources: { models: { match: [MODEL_NAME] } },
+          resources: { models: { match: [MODEL_NAME, "reactor/lingbot-world-2"] } },
           constraints: { max_sessions: MAX_SESSIONS },
         },
       ],

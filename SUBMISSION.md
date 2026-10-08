@@ -28,6 +28,7 @@
 - `say`: choice buttons, typed input, and bracketed stage events such as `[Tatsumi-sensei glares from the doorway…]`.
 - `interrupt`: cuts her off when Tatsumi-sensei walks in.
 - `list_voices`, plus the transcript events that drive the director.
+- **Sprite mode (default):** to avoid the uncanny valley, the call shows her as hand-drawn keyframes (closed, half and open mouth, plus a blink), made from the original art with Nano Banana. Her live Reactor voice track (`main_audio`) drives the mouth: the browser measures its volume (Web Audio RMS) and picks the matching frame, so she lip-syncs to Reactor's audio. One click switches to Reactor's raw generated video, which also shows the live outfit change.
 
 **Google AI Studio:**
 - **Gemini 3.8 Flash** judges each exchange and returns:
@@ -51,9 +52,9 @@ Pre-record the 0:00 clip of the original Ren'Py build.
 |---|---|---|
 | 0:00–0:12 | Original 2023 Ren'Py game: static sprite, click-to-advance | "In 2023 I made a dating sim for my Japanese class. Three hand-drawn heroines who could only say what I wrote." |
 | 0:12–0:25 | Title, then Chapter 1: Tatsumi speaks in his Gemini-designed voice. Press `]` to skip, then pick Akari. | "Today it's the same game, same art, same script, until you pick your partner…" |
-| 0:25–0:35 | The phone rings and you click Answer. Akari picks up in the library. | "…and she picks up. A live Reactor avatar made from the original sprite. She can see me." |
+| 0:25–0:35 | The phone rings and you click Answer. Akari picks up in the library, in hand-drawn sprite mode. | "…and she picks up. Reactor runs her live: her voice, her brain, her eyes on my camera. The mouth flaps are driven by her live voice track, so she stays in the original art style." |
 | 0:35–1:05 | Two exchanges: tease her, then offer boba. Hearts and reasons pop. | "Nothing is scripted. A Gemini director scores every line against the goal from my original script." |
-| 1:05–1:20 | Goal met. The scene changes to Tiger Sugar, her persona updates, and the background changes inside the avatar. | "Hit the goal and the director rewrites her persona and scene mid-call with update_call and set_reference_images." |
+| 1:05–1:20 | Goal met. The scene changes to Tiger Sugar and her persona updates. Flip to 🎞️ Live video at the mall to show her outfit changing. | "Hit the goal and the director rewrites her persona mid-call with update_call. Here's the raw Reactor video: set_reference_images just put her in her date outfit." |
 | 1:20–1:35 | Optional: stall on purpose in the library so Tatsumi slides in. | "Stall and the world pushes back." |
 | 1:35–1:55 | Mall: she notices your outfit on camera, says "do we look like a couple? …just kidding". Ending card. | "A visual novel that actually hears you, sees you, and remembers." |
 | 1:55–2:00 | Title card | "Sakura Memories Live. Thank you." |

@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@reactor-models/lingbot-world-2": "^1.0.1",
     "@reactor-models/vidu-s2-avatar": "0.4.0",
     "@reactor-team/js-sdk": "^3.0.2",
     "@reactor-team/ui": "^1.4.1",

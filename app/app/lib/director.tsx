@@ -106,8 +106,9 @@ export function DirectorProvider({ children }: { children: ReactNode }) {
   const inflightRef = useRef(false);
 
   // A new call, or a new heroine, starts the route over.
+  const heroineKey = photo?.key;
   useEffect(() => {
-    if (phase !== "starting") return;
+    if (phase !== "starting" && heroineKey === undefined) return;
     setBeatIndex(0);
     setAffection(0);
     setMood("neutral");
@@ -118,7 +119,7 @@ export function DirectorProvider({ children }: { children: ReactNode }) {
     setTurn(0);
     interruptedRef.current = -1;
     judgedRef.current = 0;
-  }, [phase, photo?.key]);
+  }, [phase === "starting", heroineKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Put her in the scene: its painted background and her outfit, through
   // set_reference_images on the live call.
@@ -211,7 +212,7 @@ export function DirectorProvider({ children }: { children: ReactNode }) {
           cue(`${character.name} has had enough.`);
           return;
         }
-        if (!verdict.goal_met) {
+        if (!verdict.goal_met || beat.walk) {
           // Stalling on campus: Tatsumi-sensei walks in.
           if (beat.school && played + 1 >= MAX_TURNS - 2 && interruptedRef.current !== index) {
             interruptedRef.current = index;

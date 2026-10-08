@@ -10,6 +10,7 @@ import { useSession } from "../lib/session";
 import { paintedOf } from "../lib/story";
 import { CAST } from "./cast";
 import { SpriteAvatar } from "./SpriteAvatar";
+import { WalkScene } from "./WalkScene";
 import type { HeroineId } from "./types";
 import type { useAudio } from "./useAudio";
 
@@ -39,7 +40,7 @@ export function CallScreen({
   const session = useSession();
   const { phase, snapshot, busy, photo, transcript, micMuted, webcam, notice } = session;
   const director = useDirector();
-  const { character, route, beat, beatIndex, affection, mood, aside, ending, thinking, choices, tatsumi } =
+  const { character, route, beat, beatIndex, affection, mood, aside, ending, thinking, choices, tatsumi, skipBeat } =
     director;
   const [draft, setDraft] = useState("");
   // Hand-drawn keyframes driven by her live voice, or Reactor's raw video.
@@ -51,6 +52,7 @@ export function CallScreen({
   const live = callLive(snapshot);
   const showVideo = active && snapshot?.video_receiving === true;
   const startable = callStartable(phase) && busy === null;
+  const walking = Boolean(beat?.walk) && active && !ending;
 
   useEffect(() => {
     if (self.current) self.current.srcObject = webcam;
@@ -113,7 +115,8 @@ export function CallScreen({
   }
 
   return (
-    <div className="call-root">
+    <div className={`call-root ${walking ? "walking" : ""}`}>
+      {walking && <WalkScene onArrive={skipBeat} />}
       {beat && (
         <img
           key={beat.background}
