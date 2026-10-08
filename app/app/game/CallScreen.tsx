@@ -119,6 +119,11 @@ export function CallScreen({
   return (
     <div className={`call-root ${walking ? "walking" : ""}`}>
       {walking && <WalkScene onArrive={skipBeat} />}
+      {walking && showVideo && (
+        <div className="walk-companion">
+          <SpriteAvatar heroine={heroine} />
+        </div>
+      )}
       {beat && (
         <img
           key={beat.background}

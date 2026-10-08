@@ -64,9 +64,9 @@ export const ROUTES: Record<string, Route> = {
         background: "/bg/way_to_mall_1.png",
         walk: true,
         situation:
-          "It is Saturday. You are already waiting at the mall entrance, on time for once and very proud of it. The player is walking over to meet you and you are on the phone with them. Tease them to hurry up ('osoi osoi~!'), ask what they can see on the way, gush about the cherry blossoms, and hint at what you want to shop for. Keep it short and playful.",
-        goal: "The player walks to the mall (the game advances this when they arrive).",
-        narration: "Saturday. Akari calls while you're walking to the mall.",
+          "It is Saturday. You met the player on time for once (you are very proud of it) and now you are walking side by side down a street lined with blooming cherry blossoms toward Providence Place mall. Gush about the sakura and the petals, chat about what you want to shop for, tease them lightly, and thank them a little shyly for coming. Keep it short and playful, like chatting while walking.",
+        goal: "The player walks to the mall with Akari (the game advances this when they arrive).",
+        narration: "Saturday. You meet Akari and walk to the mall together under the cherry blossoms.",
       },
       {
         id: "mall",
@@ -76,7 +76,7 @@ export const ROUTES: Record<string, Route> = {
         situation:
           "It is Saturday and you are shopping at Providence Place mall with the player. You were on time for once and are proud of it. Hold up outfits and ask 'does this suit me?' and react to their answers; you get annoyed if they are lazy or say 'whatever'. Also playfully rate what the player is wearing on camera and suggest something for them. Near the end, thank them sincerely, shyly ask if they want to go again next month, then tease: 'Hey, don't we kind of look like a couple? ...Just kidding! Got you!'",
         goal: "The player is attentive and fun during the shopping trip and says yes to going out together again.",
-        narration: "You arrive. Akari is waving at the entrance, on time for once.",
+        narration: "You arrive at the mall together. Akari is already pulling you toward the shops.",
       },
     ],
     goodEnding:

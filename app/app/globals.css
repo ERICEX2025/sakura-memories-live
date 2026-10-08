@@ -218,3 +218,13 @@ button:disabled {
 .call-root.walking .call-grid > .call-panel:last-child { display: none; }
 .sprite-scene { position: absolute; inset: 0; overflow: hidden; }
 .sprite-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: blur(1.5px) saturate(0.95); transform: scale(1.04); }
+/* Walking together: she stands beside you in the world, like a VN sprite. */
+.call-root.walking .call-phone { opacity: 0; pointer-events: none; width: 2px; height: 2px; right: 0; bottom: 0; box-shadow: none; }
+.walk-companion {
+  position: absolute; left: 3%; bottom: 0; z-index: 3; height: 74dvh; aspect-ratio: 3 / 4; pointer-events: none;
+  animation: walksway 1.1s ease-in-out infinite; filter: drop-shadow(0 12px 28px rgba(0, 0, 0, 0.45));
+  -webkit-mask-image: linear-gradient(to bottom, #000 82%, transparent 100%); mask-image: linear-gradient(to bottom, #000 82%, transparent 100%);
+}
+.walk-companion .sprite-scene, .walk-companion .sprite-avatar { overflow: visible; }
+@keyframes walksway { 0%, 100% { transform: translateY(0) rotate(-0.4deg) } 50% { transform: translateY(-1.2%) rotate(0.4deg) } }
+@media (prefers-reduced-motion: reduce) { .walk-companion { animation: none } }
