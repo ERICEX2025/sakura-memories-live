@@ -105,11 +105,8 @@ function GameFlow() {
         <div className="vn-stage" onClick={start}>
           <img src="/vn/start_screen.png" alt="" className="vn-layer object-cover" />
           <div className="vn-layer flex flex-col items-center justify-end gap-4 bg-gradient-to-t from-black/70 via-transparent to-transparent pb-[7%]">
-            <div className="font-vn text-[clamp(28px,5vw,64px)] font-black tracking-[0.2em] text-white drop-shadow-[0_4px_16px_rgba(255,120,150,.6)]">
-              桜メモリー
-            </div>
-            <div className="text-[clamp(12px,1.5vw,18px)] tracking-[0.5em] text-pink-100 uppercase">
-              Sakura Memories · Live
+            <div className="rounded-full bg-pink-500/90 px-4 py-1 text-[clamp(11px,1.2vw,15px)] font-bold tracking-[0.4em] text-white uppercase shadow-lg">
+              ● Live
             </div>
             <div className="mt-4 flex gap-3" onClick={(e) => e.stopPropagation()}>
               <button className="vn-choice !w-56" onClick={start}>
