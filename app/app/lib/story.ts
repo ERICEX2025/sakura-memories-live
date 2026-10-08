@@ -16,6 +16,16 @@ export interface Beat {
   goal: string;
   /** Shown, and sent as a stage direction, when the beat begins. */
   narration: string;
+  /** Her outfit for this beat, sent to the avatar as a garment reference. */
+  outfit?: string;
+  /** On campus: Tatsumi-sensei may walk in if the player stalls. */
+  school?: boolean;
+}
+
+/** The painted (anime-style) version of an original photo background. */
+export function paintedOf(background: string): string {
+  const name = background.split("/").pop()!.replace(/\.png$/, "");
+  return `/bg/painted/${name}.jpg`;
 }
 
 export interface Route {
@@ -31,6 +41,7 @@ export const ROUTES: Record<string, Route> = {
         id: "library",
         title: "Chapter 1 · The Library",
         background: "/bg/study_space.png",
+        school: true,
         situation:
           "It is 4pm and you are in the library with the player working on Tatsumi-sensei's group project. You did a few minutes of work and now you are bored and want to quit early, since the deadline is the day after tomorrow. Whine playfully and try to get out of finishing your part. You will only agree to finish if the player motivates you, and you would love it if they offered to take you for boba (tapioca milk tea) afterwards. If they look tired or bored on camera, tease them that they are just as sleepy as you.",
         goal: "The player convinces Akari to finish her part of the project today, ideally by offering a fun reward like going for boba together.",
@@ -49,6 +60,7 @@ export const ROUTES: Record<string, Route> = {
         id: "mall",
         title: "Chapter 3 · Saturday at the Mall",
         background: "/bg/mall_1.png",
+        outfit: "/characters/sakura/akari_date_outfit.jpg",
         situation:
           "It is Saturday and you are shopping at Providence Place mall with the player. You were on time for once and are proud of it. Hold up outfits and ask 'does this suit me?' and react to their answers; you get annoyed if they are lazy or say 'whatever'. Also playfully rate what the player is wearing on camera and suggest something for them. Near the end, thank them sincerely, shyly ask if they want to go again next month, then tease: 'Hey, don't we kind of look like a couple? ...Just kidding! Got you!'",
         goal: "The player is attentive and fun during the shopping trip and says yes to going out together again.",
@@ -66,6 +78,7 @@ export const ROUTES: Record<string, Route> = {
         id: "scili",
         title: "Chapter 1 · The SciLi",
         background: "/bg/sci_li.png",
+        school: true,
         situation:
           "It is 3pm and you and the player have just arrived at the SciLi (the science library) to start Tatsumi-sensei's group project. You are polite and use soft desu/masu manners. You gaze up at the tall building and wonder aloud if you could get to the roof, because at night it might be a beautiful place to watch the stars; if asked whether you like astronomy, smile and say 'betsu ni' (not really). Then get down to work: Tatsumi-sensei said any topic is fine as long as it is a story, so politely ask the player if they have an idea. If they have no idea, become quietly awkward ('...what shall we do?') and let the silence hang. You light up at a creative, specific idea, especially one involving cats or music, and gently ask why they chose it.",
         goal: "The player proposes a concrete, creative story idea for the project (for example, a cat that can play the piano) instead of saying they have no idea.",
@@ -75,6 +88,7 @@ export const ROUTES: Record<string, Route> = {
         id: "study-space",
         title: "Chapter 2 · The Study Space",
         background: "/bg/study_space.png",
+        school: true,
         situation:
           "You are in the SciLi study space with the player, planning your story. Their idea touched on music, and you shyly confess that you love the piano. You play classical and anime music; if they praise you, wave it off with 'mada mada desu!' (I still have a long way to go). If they say they like classical music too, gather your courage and ask if they would like to hear you play someday, then suggest Saturday at 3 at Steinert, the piano store with practice rooms. If they agree, notice the time ('Eh, it's already four o'clock!'), get flustered about the homework, and as you wrap up tell them they can just call you Miyuki, no -san.",
         goal: "The player shows genuine interest in Miyuki's piano playing and agrees to come hear her play at Steinert on Saturday at 3.",
@@ -100,6 +114,7 @@ export const ROUTES: Record<string, Route> = {
         id: "hay-library",
         title: "Chapter 1 · The Hay Library",
         background: "/bg/bookshelf.png",
+        school: true,
         situation:
           "Morning class just ended and you have walked to the library with the player to do Tatsumi-sensei's group project. You agreed to partner with them with a quiet '...sou shiyou' (let's do that), but you are hard to talk to: you answer in very short, flat sentences, often just '...un.' or '...' You are not cold, only reserved, and you dislike chatter for its own sake. You warm up a little if the player is calm, patient and asks you something real about the project or about you (you love to draw).",
         goal: "The player gets the quiet Tsukiko to actually start the project with them and draws her into a real (if short) exchange, without pushing or being loud.",

@@ -7,6 +7,7 @@ import { callActive, callLive, callStartable, clock, phaseLine } from "../lib/ca
 import { useDirector } from "../lib/director";
 import { ViduS2AvatarMainVideoView } from "../lib/model";
 import { useSession } from "../lib/session";
+import { paintedOf } from "../lib/story";
 import { CAST } from "./cast";
 import type { HeroineId } from "./types";
 import type { useAudio } from "./useAudio";
@@ -37,7 +38,7 @@ export function CallScreen({
   const session = useSession();
   const { phase, snapshot, busy, photo, transcript, micMuted, webcam, notice } = session;
   const director = useDirector();
-  const { character, route, beat, beatIndex, affection, mood, aside, ending, thinking, choices } =
+  const { character, route, beat, beatIndex, affection, mood, aside, ending, thinking, choices, tatsumi } =
     director;
   const [draft, setDraft] = useState("");
   const self = useRef<HTMLVideoElement>(null);
@@ -62,6 +63,11 @@ export function CallScreen({
       audio.playMusic(`/audio/${heroine}_theme.mp3`, 0.3);
     }
   }, [active, ending, heroine, audio]);
+
+  // Tatsumi-sensei's voice when he walks in.
+  useEffect(() => {
+    if (tatsumi) audio.playVoice(tatsumi.voice);
+  }, [tatsumi, audio]);
 
   // After an ending, give her a moment to say goodbye, then hang up.
   useEffect(() => {
@@ -103,7 +109,15 @@ export function CallScreen({
   return (
     <div className="call-root">
       {beat && (
-        <img key={beat.background} src={beat.background} alt="" className="call-bg vn-fade" />
+        <img
+          key={beat.background}
+          src={paintedOf(beat.background)}
+          onError={(e) => {
+            if (!e.currentTarget.src.endsWith(".png")) e.currentTarget.src = beat.background;
+          }}
+          alt=""
+          className="call-bg vn-fade"
+        />
       )}
 
       <div className="call-grid">
@@ -182,6 +196,19 @@ export function CallScreen({
           </button>
         </aside>
       </div>
+
+      {tatsumi && (
+        <div className="call-tatsumi">
+          <img src="/vn/tatsumi.png" alt="Tatsumi-sensei" />
+          <div className="call-tatsumi-line">
+            <div className="vn-plate !static !transform-none mb-1 inline-block" style={{ background: CAST.tatsumi!.color }}>
+              {CAST.tatsumi!.jp}
+            </div>
+            <p className="font-vn text-lg text-white">{tatsumi.jp}</p>
+            <p className="text-xs text-pink-100/75">{tatsumi.en}</p>
+          </div>
+        </div>
+      )}
 
       {/* VN textbox */}
       <div className="call-textbox">

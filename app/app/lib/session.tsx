@@ -95,6 +95,10 @@ interface SessionValue {
     imageID?: string;
   }) => Promise<boolean>;
   clearReference: (imageID: string | null) => Promise<boolean>;
+  /** Replace the scene's reference images (background, outfit) in one go. */
+  setScene: (
+    images: { url: string; id: string; kind: ReferenceKind; text: string }[],
+  ) => Promise<boolean>;
   endSession: () => Promise<void>;
 }
 
@@ -613,6 +617,30 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     return applied !== undefined;
   }, []);
 
+  const sceneIdsRef = useRef<string[]>([]);
+  const setScene = useCallback(
+    async (images: { url: string; id: string; kind: ReferenceKind; text: string }[]) => {
+      if (sceneIdsRef.current.length) {
+        await modelRef.current
+          .clearReferenceImages({ image_ids: sceneIdsRef.current })
+          .catch(() => undefined);
+        sceneIdsRef.current = [];
+      }
+      if (!images.length) return true;
+      const applied = await modelRef.current.setReferenceImages({
+        images: images.map((image) => ({
+          image_url: image.url,
+          image_id: image.id,
+          kind: image.kind,
+          ...(image.text && { text: image.text }),
+        })),
+      });
+      if (applied !== undefined) sceneIdsRef.current = images.map((image) => image.id);
+      return applied !== undefined;
+    },
+    [],
+  );
+
   const endSession = useCallback(async () => {
     releaseMedia();
     await modelRef.current.disconnect();
@@ -669,6 +697,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       changeVoice,
       addReference,
       clearReference,
+      setScene,
       endSession,
     }),
     [
@@ -697,6 +726,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       changeVoice,
       addReference,
       clearReference,
+      setScene,
       endSession,
     ],
   );

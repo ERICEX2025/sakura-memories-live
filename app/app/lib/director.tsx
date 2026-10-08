@@ -12,7 +12,8 @@ import {
 } from "react";
 import { CHARACTERS, type Character } from "./characters";
 import { useSession, type Line } from "./session";
-import { FAIL_AFFECTION, personaFor, ROUTES, type Beat, type Route } from "./story";
+import { TATSUMI_INTERRUPTS } from "../game/chapters";
+import { FAIL_AFFECTION, paintedOf, personaFor, ROUTES, type Beat, type Route } from "./story";
 
 // The story layer over the live call.
 //
@@ -53,6 +54,8 @@ interface DirectorValue {
   thinking: boolean;
   choices: Choice[];
   facts: string[];
+  /** Tatsumi-sensei's interruption, while it is on screen. */
+  tatsumi: (typeof TATSUMI_INTERRUPTS)[number] | null;
   /** Demo control: jump to the next beat now. */
   skipBeat: () => void;
 }
@@ -72,8 +75,15 @@ const MAX_TURNS = 6;
 // Wait for her reply to settle: transcripts arrive a sentence at a time.
 const SETTLE_MS = 900;
 
+// Reference images must be public URLs: on localhost, use the deployed copy.
+const PUBLIC_ORIGIN = "https://sakura-memories-live.vercel.app";
+function publicUrl(path: string): string {
+  const local = typeof window === "undefined" || /^(localhost|127\.|\[::1\])/.test(window.location.hostname);
+  return `${local ? PUBLIC_ORIGIN : window.location.origin}${path}`;
+}
+
 export function DirectorProvider({ children }: { children: ReactNode }) {
-  const { photo, phase, transcript, cue, updatePersona } = useSession();
+  const { photo, phase, transcript, cue, updatePersona, setScene, interrupt } = useSession();
   const character = CHARACTERS.find((c) => c.id === photo?.key) ?? null;
   const route = character ? (ROUTES[character.id] ?? null) : null;
 
@@ -86,6 +96,8 @@ export function DirectorProvider({ children }: { children: ReactNode }) {
   const [choices, setChoices] = useState<Choice[]>([]);
   const [facts, setFacts] = useState<string[]>([]);
   const [turn, setTurn] = useState(0);
+  const [tatsumi, setTatsumi] = useState<DirectorValue["tatsumi"]>(null);
+  const interruptedRef = useRef(-1);
 
   // Read inside the async judge without re-creating it.
   const stateRef = useRef({ beatIndex, affection, ending, facts, turn });
@@ -104,8 +116,42 @@ export function DirectorProvider({ children }: { children: ReactNode }) {
     setChoices([]);
     setFacts([]);
     setTurn(0);
+    interruptedRef.current = -1;
     judgedRef.current = 0;
   }, [phase, photo?.key]);
+
+  // Put her in the scene: its painted background and her outfit, through
+  // set_reference_images on the live call.
+  const applyScene = useCallback(
+    (beat: Beat | undefined) => {
+      if (!beat) return;
+      const images: { url: string; id: string; kind: "background" | "garment"; text: string }[] = [
+        {
+          url: publicUrl(paintedOf(beat.background)),
+          id: `scene-${beat.id}`,
+          kind: "background" as const,
+          text: beat.title.replace(/^Chapter \d+ · /, ""),
+        },
+      ];
+      if (beat.outfit) {
+        images.push({
+          url: publicUrl(beat.outfit),
+          id: `outfit-${beat.id}`,
+          kind: "garment" as const,
+          text: "Her date outfit",
+        });
+      }
+      void setScene(images);
+    },
+    [setScene],
+  );
+
+  const wasLiveRef = useRef(false);
+  useEffect(() => {
+    const isLive = phase === "live";
+    if (isLive && !wasLiveRef.current && route) applyScene(route.beats[stateRef.current.beatIndex]);
+    wasLiveRef.current = isLive;
+  }, [phase, route, applyScene]);
 
   const judge = useCallback(
     async (lines: Line[]) => {
@@ -165,14 +211,25 @@ export function DirectorProvider({ children }: { children: ReactNode }) {
           cue(`${character.name} has had enough.`);
           return;
         }
-        if (!verdict.goal_met) return;
+        if (!verdict.goal_met) {
+          // Stalling on campus: Tatsumi-sensei walks in.
+          if (beat.school && played + 1 >= MAX_TURNS - 2 && interruptedRef.current !== index) {
+            interruptedRef.current = index;
+            const line = TATSUMI_INTERRUPTS[index % 3];
+            setTatsumi(line);
+            setTimeout(() => setTatsumi(null), 6000);
+            interrupt();
+            cue(`Tatsumi-sensei glares at you both from the doorway: "${line.en}"`);
+          }
+          return;
+        }
         await advanceFrom(index, learned);
       } finally {
         inflightRef.current = false;
         setThinking(false);
       }
     },
-    [character, route, cue, updatePersona],
+    [character, route, cue, updatePersona, interrupt],
   );
 
   const advanceFrom = useCallback(
@@ -184,13 +241,14 @@ export function DirectorProvider({ children }: { children: ReactNode }) {
       if (following < route.beats.length) {
         setBeatIndex(following);
         await updatePersona(personaFor(character, following, learned));
+        applyScene(route.beats[following]);
         cue(route.beats[following].narration);
       } else {
         setEnding("good");
         cue("The day is coming to an end. Say a warm, slightly shy goodbye.");
       }
     },
-    [character, route, cue, updatePersona],
+    [character, route, cue, updatePersona, applyScene],
   );
 
   const skipBeat = useCallback(() => {
@@ -226,9 +284,10 @@ export function DirectorProvider({ children }: { children: ReactNode }) {
       thinking,
       choices,
       facts,
+      tatsumi,
       skipBeat,
     }),
-    [character, route, beatIndex, affection, mood, aside, ending, thinking, choices, facts, skipBeat],
+    [character, route, beatIndex, affection, mood, aside, ending, thinking, choices, facts, tatsumi, skipBeat],
   );
 
   return <DirectorContext.Provider value={value}>{children}</DirectorContext.Provider>;
