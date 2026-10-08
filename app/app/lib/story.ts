@@ -24,6 +24,16 @@ export interface Beat {
   walk?: boolean;
   /** LingBot World 2 prompt for this scene when the route is living. */
   worldPrompt?: string;
+  /** Real places along a walk: the world re-anchors to each as you pass it. */
+  checkpoints?: WalkCheckpoint[];
+}
+
+export interface WalkCheckpoint {
+  /** Fraction of the walk (0-1) at which you reach it. */
+  at: number;
+  anchor: string;
+  prompt: string;
+  label: string;
 }
 
 /** The painted (anime-style) version of an original photo background. */
@@ -72,10 +82,19 @@ export const ROUTES: Record<string, Route> = {
         title: "Interlude · Walk to the Mall",
         background: "/bg/way_to_mall_1.png",
         walk: true,
+        checkpoints: [
+          {
+            at: 0.5,
+            anchor: "/bg/painted/way_to_mall_2.jpg",
+            prompt:
+              "Anime visual novel background art, the overlook on College Hill in Providence looking down toward the white marble dome of the Rhode Island State House, a stone church steeple, cherry blossoms in bloom with petals drifting, sunny spring afternoon, painterly Makoto Shinkai style, gentle walking pace",
+            label: "📍 College Hill overlook · the State House",
+          },
+        ],
         worldPrompt:
           "Anime visual novel background art, a College Hill sidewalk in Providence, Rhode Island on a sunny spring Saturday, old New England houses, rows of cherry blossom trees in full bloom, pink petals drifting through the air, soft warm afternoon light, walking downhill toward Providence Place mall, painterly Makoto Shinkai style, gentle walking pace",
         situation:
-          "It is Saturday. You met the player on time for once (you are very proud of it) and now you are walking side by side down a street lined with blooming cherry blossoms toward Providence Place mall. Gush about the sakura and the petals, chat about what you want to shop for, tease them lightly, and thank them a little shyly for coming. Now and then react to the sky and the weather around you (the petals swirling, the sun starting to set, maybe rain clouds, festival lanterns) since the world changes as you walk. Keep it short and playful, like chatting while walking.",
+          "It is Saturday. You met the player on time for once (you are very proud of it) and now you are walking side by side down a street lined with blooming cherry blossoms toward Providence Place mall. On the way down College Hill you pass the overlook with the view of the Rhode Island State House dome (Providence Place is right next to it). Gush about the sakura and the petals, chat about what you want to shop for, tease them lightly, and thank them a little shyly for coming. Now and then react to the sky and the weather around you (the petals swirling, the sun starting to set, maybe rain clouds, festival lanterns) since the world changes as you walk. Keep it short and playful, like chatting while walking.",
         goal: "The player walks to the mall with Akari (the game advances this when they arrive).",
         narration: "Saturday. You meet Akari and walk to the mall together under the cherry blossoms.",
       },

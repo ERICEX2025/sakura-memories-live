@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { ROUTES } from "../lib/story";
 import { WalkScene } from "./WalkScene";
+
+const WALK = ROUTES.akari.beats.find((beat) => beat.walk);
 
 // The walk on its own, without a call: walk the street as long as you like,
 // then start over from the original background.
@@ -10,7 +13,7 @@ export function WalkOnly() {
   const [arrived, setArrived] = useState(false);
   return (
     <main className="relative h-dvh w-screen overflow-hidden bg-black">
-      {!arrived && <WalkScene key={run} onArrive={() => setArrived(true)} endless />}
+      {!arrived && <WalkScene key={run} onArrive={() => setArrived(true)} endless checkpoints={WALK?.checkpoints} />}
       {arrived && (
         <div className="call-ending vn-fade">
           <div className="font-vn text-4xl">🌸</div>

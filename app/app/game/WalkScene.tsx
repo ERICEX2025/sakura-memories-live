@@ -9,6 +9,7 @@ import {
 } from "@reactor-models/lingbot-world-2";
 import { useEffect, useRef, useState } from "react";
 import { fetchToken } from "../ViduApp";
+import type { WalkCheckpoint } from "../lib/story";
 
 // Saturday's walk to the mall, as a world you walk through: Reactor's
 // LingBot World 2 starts a generated world from the original game's street
@@ -41,6 +42,7 @@ export function WalkScene({
   prompt = PROMPT,
   controls = true,
   explore = true,
+  checkpoints = [],
 }: {
   onArrive: () => void;
   endless?: boolean;
@@ -53,6 +55,8 @@ export function WalkScene({
   controls?: boolean;
   /** WASD and arrow keys move the camera (every scene can be explored). */
   explore?: boolean;
+  /** Real places along the walk; the world re-anchors to each in turn. */
+  checkpoints?: WalkCheckpoint[];
 }) {
   return (
     <LingbotWorld2Provider jwtToken={fetchToken} connectOptions={AUTO_CONNECT}>
@@ -64,6 +68,7 @@ export function WalkScene({
         basePrompt={prompt}
         controls={controls}
         explore={explore}
+        checkpoints={checkpoints}
       />
     </LingbotWorld2Provider>
   );
@@ -81,6 +86,7 @@ function World({
   basePrompt,
   controls,
   explore,
+  checkpoints,
 }: {
   onArrive: () => void;
   endless: boolean;
@@ -89,9 +95,17 @@ function World({
   basePrompt: string;
   controls: boolean;
   explore: boolean;
+  checkpoints: WalkCheckpoint[];
 }) {
   const exploreRef = useRef(explore);
   exploreRef.current = explore;
+  // Walking past a checkpoint re-anchors the world to that real place.
+  const [progress, setProgress] = useState(0);
+  const reached = controls
+    ? [...checkpoints].reverse().find((checkpoint) => progress >= checkpoint.at) ?? null
+    : null;
+  anchor = reached?.anchor ?? anchor;
+  basePrompt = reached?.prompt ?? basePrompt;
   const moodDef = WORLD_MOODS.find((m) => m.id === mood) ?? null;
   const prompt = moodDef ? `${basePrompt}, ${moodDef.prompt}` : basePrompt;
   const controlsRef = useRef(controls);
@@ -102,7 +116,6 @@ function World({
   const lw2Ref = useRef(lw2);
   lw2Ref.current = lw2;
   const [stage, setStage] = useState<"connecting" | "building" | "walking" | "failed">("connecting");
-  const [progress, setProgress] = useState(0);
   const [video, setVideo] = useState(false);
   const startedRef = useRef(false);
   const movingRef = useRef<Move>("idle");
@@ -246,6 +259,15 @@ function World({
     const timer = setTimeout(() => setToast(null), 4000);
     return () => clearTimeout(timer);
   }, [mood, stage]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Passing a real place along the route.
+  const reachedLabel = reached?.label ?? null;
+  useEffect(() => {
+    if (!reachedLabel) return;
+    setToast(reachedLabel);
+    const timer = setTimeout(() => setToast(null), 4500);
+    return () => clearTimeout(timer);
+  }, [reachedLabel]);
 
   const arrive = () => {
     if (arrivedRef.current) return;

@@ -141,6 +141,7 @@ export function CallScreen({
           anchor={paintedOf(beat.background)}
           prompt={beat.worldPrompt}
           controls={walking}
+          checkpoints={beat.checkpoints}
         />
       )}
       {beat && (
