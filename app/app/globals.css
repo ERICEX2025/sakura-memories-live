@@ -228,3 +228,4 @@ button:disabled {
 .walk-companion .sprite-scene, .walk-companion .sprite-avatar { overflow: visible; }
 @keyframes walksway { 0%, 100% { transform: translateY(0) rotate(-0.4deg) } 50% { transform: translateY(-1.2%) rotate(0.4deg) } }
 @media (prefers-reduced-motion: reduce) { .walk-companion { animation: none } }
+.walk-toast { position: absolute; top: 140px; left: 50%; transform: translateX(-50%); z-index: 4; padding: 8px 18px; border-radius: 999px; background: rgba(255, 131, 154, 0.9); color: #fff; font-size: 16px; box-shadow: 0 6px 20px rgba(0,0,0,.35); white-space: nowrap; }

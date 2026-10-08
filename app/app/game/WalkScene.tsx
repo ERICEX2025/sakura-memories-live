@@ -20,13 +20,32 @@ const ANCHOR = "/bg/painted/way_to_mall_1.jpg";
 const PROMPT =
   "Anime visual novel background art, a calm city sidewalk on a sunny spring Saturday, rows of cherry blossom trees in full bloom, pink petals drifting through the air, soft warm afternoon light, the entrance of a large shopping mall ahead, painterly Makoto Shinkai style, gentle walking pace";
 const AUTO_CONNECT = { autoConnect: true };
+// Things said during the walk reshape the world: a word in the conversation
+// picks a mood, and the mood is appended to the prompt.
+export const WORLD_MOODS: { id: string; label: string; words: RegExp; prompt: string }[] = [
+  { id: "sunset", label: "🌇 The sky turns to sunset", words: /sunset|evening|dusk|orange sky|yuuhi|夕/i, prompt: "golden hour sunset, the sky glowing orange and pink, long warm shadows" },
+  { id: "night", label: "🌙 Night falls, lanterns glow", words: /night|stars|moon|lantern|yoru|夜/i, prompt: "night time, paper lanterns glowing along the street, stars in a deep blue sky, cherry blossoms lit softly" },
+  { id: "rain", label: "☔ A spring rain begins", words: /rain|umbrella|ame|雨/i, prompt: "gentle spring rain, wet glistening pavement reflecting pink blossoms, soft grey sky" },
+  { id: "petals", label: "🌸 A sakura snowstorm", words: /petal|sakura snow|snowstorm|hanafubuki|花吹雪|blossoms? (are )?falling/i, prompt: "a blizzard of pink cherry blossom petals swirling through the air, hanafubuki" },
+  { id: "festival", label: "🏮 A festival appears", words: /festival|matsuri|food stall|yatai|祭/i, prompt: "a lively spring festival street with red lanterns and food stalls under the cherry trees" },
+];
+
 // Seconds of walking forward to reach the mall.
 const WALK_SECONDS = 12;
 
-export function WalkScene({ onArrive, endless = false }: { onArrive: () => void; endless?: boolean }) {
+export function WalkScene({
+  onArrive,
+  endless = false,
+  mood = null,
+}: {
+  onArrive: () => void;
+  endless?: boolean;
+  /** A WORLD_MOODS id picked from the conversation. */
+  mood?: string | null;
+}) {
   return (
     <LingbotWorld2Provider jwtToken={fetchToken} connectOptions={AUTO_CONNECT}>
-      <World onArrive={onArrive} endless={endless} />
+      <World onArrive={onArrive} endless={endless} mood={mood} />
     </LingbotWorld2Provider>
   );
 }
@@ -35,7 +54,11 @@ type Move = "idle" | "forward" | "back";
 type Strafe = "idle" | "strafe_left" | "strafe_right";
 type Look = "idle" | "left" | "right";
 
-function World({ onArrive, endless }: { onArrive: () => void; endless: boolean }) {
+function World({ onArrive, endless, mood }: { onArrive: () => void; endless: boolean; mood: string | null }) {
+  const moodDef = WORLD_MOODS.find((m) => m.id === mood) ?? null;
+  const prompt = moodDef ? `${PROMPT}, ${moodDef.prompt}` : PROMPT;
+  const promptRef = useRef(prompt);
+  promptRef.current = prompt;
   const lw2 = useLingbotWorld2();
   const lw2Ref = useRef(lw2);
   lw2Ref.current = lw2;
@@ -142,14 +165,25 @@ function World({ onArrive, endless }: { onArrive: () => void; endless: boolean }
     return () => clearInterval(timer);
   }, [endless]);
 
-  // World models drift on long walks: keep reminding it of the street.
+  // World models drift on long walks: keep reminding it of the street (and
+  // of whatever the conversation turned it into).
   useEffect(() => {
     if (stage !== "walking") return;
     const timer = setInterval(() => {
-      void lw2Ref.current.setPrompt({ prompt: PROMPT });
+      void lw2Ref.current.setPrompt({ prompt: promptRef.current });
     }, 5000);
     return () => clearInterval(timer);
   }, [stage]);
+
+  // A new mood from the conversation: reshape the world right away.
+  const [toast, setToast] = useState<string | null>(null);
+  useEffect(() => {
+    if (stage !== "walking" || !moodDef) return;
+    void lw2Ref.current.setPrompt({ prompt: promptRef.current });
+    setToast(moodDef.label);
+    const timer = setTimeout(() => setToast(null), 4000);
+    return () => clearTimeout(timer);
+  }, [mood, stage]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const arrive = () => {
     if (arrivedRef.current) return;
@@ -164,6 +198,7 @@ function World({ onArrive, endless }: { onArrive: () => void; endless: boolean }
         videoObjectFit="cover"
         className={`walk-layer transition-opacity duration-700 ${video ? "opacity-100" : "opacity-0"}`}
       />
+      {toast && <div className="walk-toast vn-fade font-vn">{toast}</div>}
       <div className="walk-hud">
         <div className="font-vn text-lg text-white">土曜日 · モールへ</div>
         <div className="text-xs tracking-widest text-pink-100/80 uppercase">Saturday · Walk to the mall</div>

@@ -35,6 +35,7 @@
 - WASD and the arrow keys map to `setMoveLongitudinal`, `setMoveLateral`, `setLookHorizontal` and `setLookVertical`.
 - Akari walks beside you as her live, lip-synced cut-out sprite, talking about the cherry blossoms. This follows the original script's 「じゃ歩いて行こうぜ」 ("let's walk there together").
 - `setPrompt` is re-sent every 5 seconds to keep the world from drifting.
+- **The conversation reshapes the world.** When you or Akari mention the sunset, night or stars, rain, the petals, or a festival, a new `setPrompt` goes to LingBot and the street changes live, with an on-screen note such as "🌇 The sky turns to sunset".
 - Arriving hands off to the mall chapter.
 
 **Google AI Studio:**

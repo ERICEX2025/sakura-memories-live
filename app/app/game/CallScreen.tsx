@@ -10,7 +10,7 @@ import { useSession } from "../lib/session";
 import { paintedOf } from "../lib/story";
 import { CAST } from "./cast";
 import { SpriteAvatar } from "./SpriteAvatar";
-import { WalkScene } from "./WalkScene";
+import { WORLD_MOODS, WalkScene } from "./WalkScene";
 import type { HeroineId } from "./types";
 import type { useAudio } from "./useAudio";
 
@@ -53,6 +53,15 @@ export function CallScreen({
   const showVideo = active && snapshot?.video_receiving === true;
   const startable = callStartable(phase) && busy === null;
   const walking = Boolean(beat?.walk) && active && !ending;
+  // The latest thing either of you said that names a mood reshapes the world.
+  const worldMood = useMemo(() => {
+    if (!walking) return null;
+    for (const line of [...transcript].reverse().slice(0, 6)) {
+      const hit = WORLD_MOODS.find((m) => m.words.test(line.text));
+      if (hit) return hit.id;
+    }
+    return null;
+  }, [walking, transcript]);
 
   useEffect(() => {
     if (self.current) self.current.srcObject = webcam;
@@ -118,7 +127,7 @@ export function CallScreen({
 
   return (
     <div className={`call-root ${walking ? "walking" : ""}`}>
-      {walking && <WalkScene onArrive={skipBeat} />}
+      {walking && <WalkScene onArrive={skipBeat} mood={worldMood} />}
       {walking && showVideo && (
         <div className="walk-companion">
           <SpriteAvatar heroine={heroine} />

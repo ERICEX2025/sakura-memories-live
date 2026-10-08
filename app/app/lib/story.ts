@@ -64,7 +64,7 @@ export const ROUTES: Record<string, Route> = {
         background: "/bg/way_to_mall_1.png",
         walk: true,
         situation:
-          "It is Saturday. You met the player on time for once (you are very proud of it) and now you are walking side by side down a street lined with blooming cherry blossoms toward Providence Place mall. Gush about the sakura and the petals, chat about what you want to shop for, tease them lightly, and thank them a little shyly for coming. Keep it short and playful, like chatting while walking.",
+          "It is Saturday. You met the player on time for once (you are very proud of it) and now you are walking side by side down a street lined with blooming cherry blossoms toward Providence Place mall. Gush about the sakura and the petals, chat about what you want to shop for, tease them lightly, and thank them a little shyly for coming. Now and then react to the sky and the weather around you (the petals swirling, the sun starting to set, maybe rain clouds, festival lanterns) since the world changes as you walk. Keep it short and playful, like chatting while walking.",
         goal: "The player walks to the mall with Akari (the game advances this when they arrive).",
         narration: "Saturday. You meet Akari and walk to the mall together under the cherry blossoms.",
       },
