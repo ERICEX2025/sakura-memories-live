@@ -70,11 +70,14 @@ export function CallScreen({
   }, [tatsumi, audio]);
 
   // After an ending, give her a moment to say goodbye, then hang up.
+  // (endCall through a ref: the session value changes every second.)
+  const endCallRef = useRef(session.endCall);
+  endCallRef.current = session.endCall;
   useEffect(() => {
     if (!ending || !active) return;
-    const timer = setTimeout(() => void session.endCall(), 12_000);
+    const timer = setTimeout(() => void endCallRef.current(), 12_000);
     return () => clearTimeout(timer);
-  }, [ending, active, session]);
+  }, [ending, active]);
 
   const herLine = useMemo(
     () => [...transcript].reverse().find((line) => line.speaker === "character"),

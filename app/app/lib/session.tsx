@@ -319,6 +319,12 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const openMedia = useCallback(
     async (mode: CallMode): Promise<CallMode> => {
       releaseMedia();
+      // `?typed`: no camera or microphone, talk through the text box (tests,
+      // and a fallback for a noisy room).
+      if (new URLSearchParams(window.location.search).has("typed")) {
+        setNotice("Typed mode: talk through the text box.");
+        return "audio";
+      }
       let media: MediaStream | null = null;
       let granted = mode;
       try {
@@ -382,7 +388,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   // ── Binding a character ──────────────────────────────────────────────────
 
   const prepare = useCallback(
-    async (next: Photo) => {
+    async (next: Photo, retried = false): Promise<void> => {
       setNotice(null);
       try {
         if (statusRef.current === "disconnected") {
@@ -431,6 +437,12 @@ export function SessionProvider({ children }: { children: ReactNode }) {
           await modelRef.current.createAvatar({ image, name: next.name });
         }
       } catch (error) {
+        // The first connect sometimes gets no snapshot: reconnect once.
+        if (!retried) {
+          await modelRef.current.disconnect().catch(() => undefined);
+          setBusy(null);
+          return prepare(next, true);
+        }
         setNotice(message(error, "The character could not be prepared."));
       } finally {
         setBusy(null);

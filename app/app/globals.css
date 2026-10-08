@@ -116,11 +116,12 @@ button:disabled {
 @media (prefers-reduced-motion: reduce) { .vn-fade, .vn-next { animation: none } }
 
 /* ── The call ───────────────────────────────────────────────────────── */
-.call-root { position: relative; width: 100vw; height: 100dvh; overflow: hidden; background: #120a14; }
+.call-root { position: relative; width: 100vw; height: 100dvh; overflow: hidden; background: #120a14; display: flex; flex-direction: column; }
 .call-bg { position: absolute; inset: -4%; width: 108%; height: 108%; object-fit: cover; filter: blur(14px) brightness(0.42) saturate(0.85); }
 .call-grid {
   position: relative;
-  height: calc(100dvh - 190px);
+  flex: 1;
+  min-height: 0;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   gap: 24px;
@@ -163,8 +164,8 @@ button:disabled {
 }
 .call-btn:hover { background: rgba(255, 131, 154, 0.2); }
 .call-textbox {
-  position: absolute; left: 50%; bottom: 20px; transform: translateX(-50%);
-  width: min(1100px, calc(100vw - 32px)); min-height: 140px;
+  position: relative; margin: 22px auto 16px; flex: none;
+  width: min(1100px, calc(100vw - 32px)); min-height: 120px;
   padding: 22px 24px 14px; border-radius: 16px;
   background: linear-gradient(180deg, rgba(42, 20, 40, 0.9), rgba(20, 12, 28, 0.95));
   border: 1.5px solid rgba(255, 175, 195, 0.55); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
