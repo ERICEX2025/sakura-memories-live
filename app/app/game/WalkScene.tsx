@@ -37,15 +37,30 @@ export function WalkScene({
   onArrive,
   endless = false,
   mood = null,
+  anchor = ANCHOR,
+  prompt = PROMPT,
+  controls = true,
 }: {
   onArrive: () => void;
   endless?: boolean;
   /** A WORLD_MOODS id picked from the conversation. */
   mood?: string | null;
+  /** The painted image the world starts from; a new one re-anchors it. */
+  anchor?: string;
+  prompt?: string;
+  /** WASD walking and the walk HUD; off for a living scene you only watch. */
+  controls?: boolean;
 }) {
   return (
     <LingbotWorld2Provider jwtToken={fetchToken} connectOptions={AUTO_CONNECT}>
-      <World onArrive={onArrive} endless={endless} mood={mood} />
+      <World
+        onArrive={onArrive}
+        endless={endless}
+        mood={mood}
+        anchor={anchor}
+        basePrompt={prompt}
+        controls={controls}
+      />
     </LingbotWorld2Provider>
   );
 }
@@ -54,9 +69,25 @@ type Move = "idle" | "forward" | "back";
 type Strafe = "idle" | "strafe_left" | "strafe_right";
 type Look = "idle" | "left" | "right";
 
-function World({ onArrive, endless, mood }: { onArrive: () => void; endless: boolean; mood: string | null }) {
+function World({
+  onArrive,
+  endless,
+  mood,
+  anchor,
+  basePrompt,
+  controls,
+}: {
+  onArrive: () => void;
+  endless: boolean;
+  mood: string | null;
+  anchor: string;
+  basePrompt: string;
+  controls: boolean;
+}) {
   const moodDef = WORLD_MOODS.find((m) => m.id === mood) ?? null;
-  const prompt = moodDef ? `${PROMPT}, ${moodDef.prompt}` : PROMPT;
+  const prompt = moodDef ? `${basePrompt}, ${moodDef.prompt}` : basePrompt;
+  const controlsRef = useRef(controls);
+  controlsRef.current = controls;
   const promptRef = useRef(prompt);
   promptRef.current = prompt;
   const lw2 = useLingbotWorld2();
@@ -79,25 +110,33 @@ function World({ onArrive, endless, mood }: { onArrive: () => void; endless: boo
     return () => clearTimeout(timer);
   }, [lw2.status]);
 
-  // Build the world once the session is ready.
+  // Build the world from the anchor once the session is ready, and rebuild it
+  // in place (same session, so seconds instead of a fresh connect) whenever
+  // the scene moves to a new anchor.
+  const builtRef = useRef<string | null>(null);
   useEffect(() => {
-    if (lw2.status !== "ready" || startedRef.current) return;
+    if (lw2.status !== "ready" || builtRef.current === anchor) return;
+    const rebuild = builtRef.current !== null;
+    builtRef.current = anchor;
     startedRef.current = true;
     setStage("building");
+    setVideo(false);
     (async () => {
       try {
-        const blob = await (await fetch(ANCHOR)).blob();
-        const ref = await lw2Ref.current.uploadFile(new File([blob], "street.jpg", { type: blob.type }));
-        await lw2Ref.current.setImage({ image: ref });
-        await lw2Ref.current.setPrompt({ prompt: PROMPT });
-        await lw2Ref.current.setRotationSpeedDeg({ rotation_speed_deg: 1.5 });
-        await lw2Ref.current.start();
-        setStage("walking");
+        const api = lw2Ref.current;
+        if (rebuild) await api.reset();
+        const blob = await (await fetch(anchor)).blob();
+        const ref = await api.uploadFile(new File([blob], "scene.jpg", { type: blob.type }));
+        await api.setImage({ image: ref });
+        await api.setPrompt({ prompt: promptRef.current });
+        await api.setRotationSpeedDeg({ rotation_speed_deg: 1.5 });
+        await api.start();
+        if (builtRef.current === anchor) setStage("walking");
       } catch {
         setStage("failed");
       }
     })();
-  }, [lw2.status]);
+  }, [lw2.status, anchor]);
 
   // First frames: show the video instead of the still.
   useEffect(() => {
@@ -124,7 +163,7 @@ function World({ onArrive, endless, mood }: { onArrive: () => void; endless: boo
     };
     const keys = ["w", "a", "s", "d", "arrowleft", "arrowright", "arrowup", "arrowdown"];
     const down = (event: KeyboardEvent) => {
-      if (event.target instanceof HTMLInputElement) return;
+      if (event.target instanceof HTMLInputElement || !controlsRef.current) return;
       const key = event.key.toLowerCase();
       if (!keys.includes(key) || held.has(key)) return;
       event.preventDefault();
@@ -153,7 +192,7 @@ function World({ onArrive, endless, mood }: { onArrive: () => void; endless: boo
     let last = performance.now();
     const timer = setInterval(() => {
       const now = performance.now();
-      if (movingRef.current === "forward" && !arrivedRef.current) walked += (now - last) / 1000;
+      if (movingRef.current === "forward" && !arrivedRef.current && controlsRef.current) walked += (now - last) / 1000;
       last = now;
       const next = Math.min(1, walked / WALK_SECONDS);
       setProgress(next);
@@ -193,12 +232,19 @@ function World({ onArrive, endless, mood }: { onArrive: () => void; endless: boo
 
   return (
     <div className="walk-root">
-      <img src={ANCHOR} alt="" className={`walk-layer object-cover transition-opacity duration-700 ${video ? "opacity-0" : "opacity-100"}`} />
+      <img key={anchor} src={anchor} alt="" className={`walk-layer object-cover transition-opacity duration-700 ${video ? "opacity-0" : "opacity-100"}`} />
       <LingbotWorld2MainVideoView
         videoObjectFit="cover"
         className={`walk-layer transition-opacity duration-700 ${video ? "opacity-100" : "opacity-0"}`}
       />
       {toast && <div className="walk-toast vn-fade font-vn">{toast}</div>}
+      {!controls && (
+        <div className="world-badge">
+          <span className={`h-1.5 w-1.5 rounded-full ${stage === "walking" && video ? "bg-emerald-400" : "bg-amber-300"}`} />
+          {stage === "walking" && video ? "Live world · LingBot World 2" : "Generating the scene…"}
+        </div>
+      )}
+      {controls && (
       <div className="walk-hud">
         <div className="font-vn text-lg text-white">土曜日 · モールへ</div>
         <div className="text-xs tracking-widest text-pink-100/80 uppercase">Saturday · Walk to the mall</div>
@@ -220,6 +266,7 @@ function World({ onArrive, endless, mood }: { onArrive: () => void; endless: boo
           {stage === "failed" ? "Arrive at the mall" : "Skip ahead →"}
         </button>
       </div>
+      )}
     </div>
   );
 }

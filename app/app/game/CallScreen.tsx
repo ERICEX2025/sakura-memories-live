@@ -9,6 +9,7 @@ import { ViduS2AvatarMainVideoView } from "../lib/model";
 import { useSession } from "../lib/session";
 import { paintedOf } from "../lib/story";
 import { CAST } from "./cast";
+import { MemoryCard, useMemoryCG } from "./MemoryCG";
 import { SpriteAvatar } from "./SpriteAvatar";
 import { WORLD_MOODS, WalkScene } from "./WalkScene";
 import type { HeroineId } from "./types";
@@ -47,21 +48,25 @@ export function CallScreen({
   const [view, setView] = useState<"sprite" | "video">("sprite");
   const self = useRef<HTMLVideoElement>(null);
   const plate = CAST[heroine]!;
+  const memory = useMemoryCG(ending, heroine, beat ? paintedOf(beat.background) : undefined, webcam, route?.goodEnding);
 
   const active = callActive(phase);
   const live = callLive(snapshot);
   const showVideo = active && snapshot?.video_receiving === true;
   const startable = callStartable(phase) && busy === null;
   const walking = Boolean(beat?.walk) && active && !ending;
+  // Living scenes: the whole route plays inside a LingBot world, with her
+  // standing in it; the walk is the one beat you steer yourself.
+  const inWorld = (walking || Boolean(route?.living)) && active && !ending;
   // The latest thing either of you said that names a mood reshapes the world.
   const worldMood = useMemo(() => {
-    if (!walking) return null;
+    if (!inWorld) return null;
     for (const line of [...transcript].reverse().slice(0, 6)) {
       const hit = WORLD_MOODS.find((m) => m.words.test(line.text));
       if (hit) return hit.id;
     }
     return null;
-  }, [walking, transcript]);
+  }, [inWorld, transcript]);
 
   useEffect(() => {
     if (self.current) self.current.srcObject = webcam;
@@ -126,9 +131,19 @@ export function CallScreen({
   }
 
   return (
-    <div className={`call-root ${walking ? "walking" : ""}`}>
-      {walking && <WalkScene onArrive={skipBeat} mood={worldMood} />}
-      {walking && showVideo && (
+    <div
+      className={`call-root ${inWorld ? "in-world" : ""} ${walking ? "walking" : ""} ${inWorld && view === "video" ? "world-video" : ""}`}
+    >
+      {inWorld && beat && (
+        <WalkScene
+          onArrive={skipBeat}
+          mood={worldMood}
+          anchor={paintedOf(beat.background)}
+          prompt={beat.worldPrompt}
+          controls={walking}
+        />
+      )}
+      {inWorld && showVideo && view === "sprite" && (
         <div className="walk-companion">
           <SpriteAvatar heroine={heroine} />
         </div>
@@ -293,6 +308,7 @@ export function CallScreen({
 
       {ending && !active && route && (
         <div className="call-ending vn-fade">
+          {ending === "good" && <MemoryCard result={memory} heroine={heroine} />}
           <div className="font-vn text-5xl">{ending === "good" ? "🌸" : ending === "hungup" ? "📵" : "🥀"}</div>
           {ending === "hungup" && (
             <div className="font-vn text-lg text-pink-200">{plate.jp} hung up on you.</div>
