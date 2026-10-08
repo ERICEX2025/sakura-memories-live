@@ -1,6 +1,8 @@
 # 桜メモリー Sakura Memories Live
 
-My 2023 anime visual novel, rebuilt so its hand-drawn heroines video-call you live. Built at the Reactor × Google DeepMind World Model Hackathon (NYC, Oct 8 2026).
+My 2023 anime visual novel about Brown University in Providence, rebuilt so its hand-drawn heroines video-call you live from inside living worlds. Built at the Reactor × Google DeepMind World Model Hackathon (NYC, Oct 8 2026).
+
+> **Two Reactor models, one story:** she lives in the avatar (Vidu S2-Avatar), the world lives in LingBot World 2, and the conversation connects them.
 
 **Play:** https://sakura-memories-live.vercel.app · **Just the world model:** https://sakura-memories-live.vercel.app/walk
 
@@ -9,7 +11,10 @@ My 2023 anime visual novel, rebuilt so its hand-drawn heroines video-call you li
 - **The original game, intact.** Chapters 1–2 play as classic VN scenes from the original Ren'Py script, with its sprites, backgrounds, music and choices. The text is bilingual (Japanese and English). Tatsumi-sensei and the narrator speak in voices designed with Gemini TTS.
 - **Then you pick a partner, and she calls you.** Each heroine is a live Reactor **Vidu S2-Avatar** built from her original sprite. She hears you, sees you through your camera, and stays in character.
 - **A Gemini director runs the story.** After every exchange, Gemini 3.8 Flash scores affection, mood and the chapter goal (taken from the original script), and offers choice buttons. When you meet the goal, it rewrites her persona mid-call (`update_call`) and changes her scene and outfit (`set_reference_images`). Stall in class and Tatsumi-sensei walks in (`interrupt`). Be cruel and she hangs up.
-- **Saturday is a world model.** You walk to the mall together through a **LingBot World 2** world generated from the original street background, using WASD and the arrow keys. Akari walks beside you, live. Mentioning the sunset, rain or night reshapes the world (`setPrompt`).
+- **Every scene is a living world.** Each chapter plays inside a **LingBot World 2** world generated from the original game's real photos of Brown and Providence, repainted as anime background art: the Rock, Tiger Sugar on Thayer, College Hill, Providence Place, the SciLi, Steinert, the John Hay Library. One world session lasts the whole route and re-anchors to each new location in about 4 seconds, while she stays on the call in a window beside it.
+- **You walk the world yourself on Saturday.** You walk to Providence Place with WASD and the arrow keys while she chats with you.
+- **The conversation shapes the world.** When either of you mentions the sunset, rain, night, the petals or a festival, a new `setPrompt` goes to LingBot and the scene changes live.
+- **The ending is a Sakura Memory.** On a good ending, a webcam frame of you and her sprite go to Nano Banana, which draws a polaroid-style CG of the two of you at that place.
 - **No uncanny valley.** In sprite mode she appears as hand-drawn keyframes (closed-mouth, open-mouth and blink frames made with Nano Banana from the original art), and her live Reactor voice drives the lip-sync. One click switches to Reactor's raw video.
 
 ## Stack

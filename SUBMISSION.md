@@ -15,6 +15,13 @@
 
 **Tracks:** Interactive Narrative is the primary fit. Best Avatar Use Case is the secondary fit.
 
+**Pitch line:** "Two Reactor models, one story: she lives in the avatar, the world lives in LingBot, and the conversation connects them."
+
+**What's new since the first draft:**
+- **Every chapter is a living LingBot world** built from the original Brown and Providence photos. One persistent session re-anchors in about 4 seconds per scene.
+- **The heroine sits in a call window beside the world.** The world model can't hold a consistent, lip-synced character, so each model does what it's best at.
+- **A Sakura Memory polaroid CG** appears on good endings.
+
 ## What uses Reactor (for the technical score)
 
 **Vidu S2-Avatar commands:**

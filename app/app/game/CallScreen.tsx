@@ -143,11 +143,6 @@ export function CallScreen({
           controls={walking}
         />
       )}
-      {false && inWorld && showVideo && view === "sprite" && (
-        <div className="walk-companion">
-          <SpriteAvatar heroine={heroine} />
-        </div>
-      )}
       {beat && (
         <img
           key={beat.background}

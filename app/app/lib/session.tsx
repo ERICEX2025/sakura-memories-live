@@ -224,9 +224,6 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   // ── The snapshot, and what hangs off it ──────────────────────────────────
 
   useViduS2AvatarSessionState((next) => {
-    if (next.end_reason || next.last_error) {
-      console.warn("[sakura] session_state", next.phase, next.end_reason, JSON.stringify(next.last_error));
-    }
     setSnapshot(next);
     firstSnapshotRef.current?.();
     firstSnapshotRef.current = null;
@@ -234,8 +231,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (status !== "ready") setSnapshot(null);
-    console.warn("[sakura] status", status, live.lastError?.message ?? "");
-  }, [status]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [status]);
 
   // Remember the character once the model has built it. Only a snapshot
   // whose `avatar_id` differs from the one the session held when `prepare()`
@@ -513,7 +509,6 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   // ── Refusals ─────────────────────────────────────────────────────────────
 
   useViduS2AvatarCommandError((error) => {
-    console.warn("[sakura] command_error", error.command, error.code, error.origin, error.reason);
     // A refused `start_call` never became a call, so nothing else releases
     // the microphone it published.
     if (error.command === "start_call") releaseMedia();
