@@ -25,7 +25,7 @@ import { FAIL_AFFECTION, paintedOf, personaFor, ROUTES, type Beat, type Route } 
 // route badly; clearing the last beat ends it well.
 
 export type Mood = "happy" | "neutral" | "pout" | "surprise" | "embarrassed";
-export type Ending = "good" | "bad" | null;
+export type Ending = "good" | "bad" | "hungup" | null;
 
 export interface Choice {
   tone: string;
@@ -83,7 +83,7 @@ function publicUrl(path: string): string {
 }
 
 export function DirectorProvider({ children }: { children: ReactNode }) {
-  const { photo, phase, transcript, cue, updatePersona, setScene, interrupt } = useSession();
+  const { photo, phase, status, transcript, cue, updatePersona, setScene, interrupt } = useSession();
   const character = CHARACTERS.find((c) => c.id === photo?.key) ?? null;
   const route = character ? (ROUTES[character.id] ?? null) : null;
 
@@ -108,7 +108,7 @@ export function DirectorProvider({ children }: { children: ReactNode }) {
   // A new call, or a new heroine, starts the route over.
   const heroineKey = photo?.key;
   useEffect(() => {
-    if (phase !== "starting" && heroineKey === undefined) return;
+    if (phase !== "starting" && phase !== "avatar_ready" && heroineKey === undefined) return;
     setBeatIndex(0);
     setAffection(0);
     setMood("neutral");
@@ -119,7 +119,7 @@ export function DirectorProvider({ children }: { children: ReactNode }) {
     setTurn(0);
     interruptedRef.current = -1;
     judgedRef.current = 0;
-  }, [phase === "starting", heroineKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [phase === "starting" || phase === "avatar_ready", heroineKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Put her in the scene: its painted background and her outfit, through
   // set_reference_images on the live call.
@@ -146,6 +146,23 @@ export function DirectorProvider({ children }: { children: ReactNode }) {
     },
     [setScene],
   );
+
+  // She hangs up: Vidu ends the call (and the session) on a hostile message.
+  // A call that drops soon after the player spoke is her hanging up on them.
+  const lastSpokeRef = useRef(0);
+  useEffect(() => {
+    if (transcript[transcript.length - 1]?.speaker === "user") lastSpokeRef.current = Date.now();
+  }, [transcript]);
+  const wasActiveRef = useRef(false);
+  useEffect(() => {
+    const isActive = status === "ready" && (phase === "live" || phase === "warming_up" || phase === "starting");
+    const dropped = wasActiveRef.current && !isActive && phase !== "ending" && phase !== "ended";
+    if (dropped && !stateRef.current.ending && Date.now() - lastSpokeRef.current < 25_000) {
+      setEnding("hungup");
+      setChoices([]);
+    }
+    wasActiveRef.current = isActive;
+  }, [phase, status]);
 
   const wasLiveRef = useRef(false);
   useEffect(() => {

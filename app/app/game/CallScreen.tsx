@@ -279,7 +279,10 @@ export function CallScreen({
 
       {ending && !active && route && (
         <div className="call-ending vn-fade">
-          <div className="font-vn text-5xl">{ending === "good" ? "🌸" : "🥀"}</div>
+          <div className="font-vn text-5xl">{ending === "good" ? "🌸" : ending === "hungup" ? "📵" : "🥀"}</div>
+          {ending === "hungup" && (
+            <div className="font-vn text-lg text-pink-200">{plate.jp} hung up on you.</div>
+          )}
           <p className="font-vn max-w-2xl text-center text-2xl leading-relaxed text-white">
             {ending === "good" ? route.goodEnding : route.badEnding}
           </p>
@@ -287,7 +290,14 @@ export function CallScreen({
             {ending === "good" ? `${plate.en}'s ending` : "Route lost"}
           </div>
           <div className="flex gap-3">
-            <button className="vn-choice !w-48" onClick={() => void session.startCall()}>
+            <button
+              className="vn-choice !w-48"
+              onClick={() =>
+                ending === "hungup" && character
+                  ? session.chooseCharacter(character)
+                  : void session.startCall()
+              }
+            >
               Call again
             </button>
             <button className="vn-choice !w-48" onClick={onExit}>
