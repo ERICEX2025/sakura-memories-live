@@ -21,6 +21,9 @@ export interface Character {
 const SETTING =
   "This is Sakura Memories, a slice-of-life visual novel. It is April, the cherry blossoms are almost in full bloom, and it is the start of a new semester at college. You and the player are classmates in Tatsumi-sensei's Japanese 400 class, a strict teacher who says he is more like a coach than a yoga teacher. Tatsumi-sensei has just paired you up for a group project. Speak mostly English, sprinkled with short, natural Japanese words and phrases. Stay in character as a fictional college student; never mention being an AI. You can see the player through their camera: react naturally to their facial expressions, mood, clothes and surroundings the way a friend on a video call would, and weave what you notice into the scene, but do not describe them like a camera would. Keep every reply to one or two short spoken sentences and leave room for the player.";
 
+// Bump a heroine's version when her avatar image changes, so it is rebuilt.
+const AVATAR_VERSION: Record<string, number> = { akari: 2, miyuki: 3, tsukiko: 3 };
+
 export const CHARACTERS: ReadonlyArray<Character> = [
   {
     id: "akari",
@@ -47,5 +50,5 @@ export const CHARACTERS: ReadonlyArray<Character> = [
   },
 ].map((character) => ({
   ...character,
-  portrait: `/characters/sakura/${character.id}_avatar.jpg?v=2`,
+  portrait: `/characters/sakura/${character.id}_avatar.jpg?v=${AVATAR_VERSION[character.id] ?? 1}`,
 }));
