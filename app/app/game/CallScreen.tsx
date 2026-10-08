@@ -132,7 +132,7 @@ export function CallScreen({
 
   return (
     <div
-      className={`call-root ${inWorld ? "in-world" : ""} ${walking ? "walking" : ""} ${inWorld && view === "video" ? "world-video" : ""}`}
+      className={`call-root ${inWorld ? "in-world" : ""} ${walking ? "walking" : ""}`}
     >
       {inWorld && beat && (
         <WalkScene
@@ -143,7 +143,7 @@ export function CallScreen({
           controls={walking}
         />
       )}
-      {inWorld && showVideo && view === "sprite" && (
+      {false && inWorld && showVideo && view === "sprite" && (
         <div className="walk-companion">
           <SpriteAvatar heroine={heroine} />
         </div>
