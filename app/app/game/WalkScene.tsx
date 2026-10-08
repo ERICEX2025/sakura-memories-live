@@ -19,12 +19,13 @@ import { fetchToken } from "../ViduApp";
 const ANCHOR = "/bg/painted/way_to_mall_1.jpg";
 const PROMPT =
   "Anime visual novel background art, a calm city sidewalk on a sunny spring Saturday, rows of cherry blossom trees in full bloom, pink petals drifting through the air, soft warm afternoon light, the entrance of a large shopping mall ahead, painterly Makoto Shinkai style, gentle walking pace";
+const AUTO_CONNECT = { autoConnect: true };
 // Seconds of walking forward to reach the mall.
-const WALK_SECONDS = 22;
+const WALK_SECONDS = 12;
 
 export function WalkScene({ onArrive }: { onArrive: () => void }) {
   return (
-    <LingbotWorld2Provider jwtToken={fetchToken}>
+    <LingbotWorld2Provider jwtToken={fetchToken} connectOptions={AUTO_CONNECT}>
       <World onArrive={onArrive} />
     </LingbotWorld2Provider>
   );
@@ -45,10 +46,15 @@ function World({ onArrive }: { onArrive: () => void }) {
   const movingRef = useRef<Move>("idle");
   const arrivedRef = useRef(false);
 
-  // Connect once; the provider disconnects on unmount.
+  // The provider connects on mount; if it is still disconnected a few
+  // seconds later, ask again.
   useEffect(() => {
-    void lw2Ref.current.connect().catch(() => setStage("failed"));
-  }, []);
+    if (lw2.status !== "disconnected" || startedRef.current) return;
+    const timer = setTimeout(() => {
+      void lw2Ref.current.connect().catch(() => setStage("failed"));
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [lw2.status]);
 
   // Build the world once the session is ready.
   useEffect(() => {
@@ -115,26 +121,40 @@ function World({ onArrive }: { onArrive: () => void }) {
     };
   }, []);
 
-  // Walking forward brings the mall closer.
+  // Walking forward brings the mall closer, measured in real time (timers
+  // are throttled when the window is in the background).
+  const onArriveRef = useRef(onArrive);
+  onArriveRef.current = onArrive;
   useEffect(() => {
+    let walked = 0;
+    let last = performance.now();
     const timer = setInterval(() => {
-      if (movingRef.current !== "forward" || arrivedRef.current) return;
-      setProgress((p) => {
-        const next = Math.min(1, p + 0.25 / WALK_SECONDS);
-        if (next >= 1 && !arrivedRef.current) {
-          arrivedRef.current = true;
-          setTimeout(onArrive, 600);
-        }
-        return next;
-      });
-    }, 250);
+      const now = performance.now();
+      if (movingRef.current === "forward" && !arrivedRef.current) walked += (now - last) / 1000;
+      last = now;
+      const next = Math.min(1, walked / WALK_SECONDS);
+      setProgress(next);
+      if (next >= 1 && !arrivedRef.current) {
+        arrivedRef.current = true;
+        setTimeout(() => onArriveRef.current(), 600);
+      }
+    }, 200);
     return () => clearInterval(timer);
-  }, [onArrive]);
+  }, []);
+
+  // World models drift on long walks: keep reminding it of the street.
+  useEffect(() => {
+    if (stage !== "walking") return;
+    const timer = setInterval(() => {
+      void lw2Ref.current.setPrompt({ prompt: PROMPT });
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [stage]);
 
   const arrive = () => {
     if (arrivedRef.current) return;
     arrivedRef.current = true;
-    onArrive();
+    onArriveRef.current();
   };
 
   return (
@@ -152,7 +172,9 @@ function World({ onArrive }: { onArrive: () => void }) {
         </div>
         <div className="mt-1 text-[11px] text-zinc-300">
           {stage === "connecting"
-            ? "Opening the world…"
+            ? lw2.status === "waiting"
+              ? "Waiting for a world-model GPU…"
+              : `Opening the world… ${lw2.lastError ? `(${lw2.lastError.message})` : ""}`
             : stage === "building"
               ? "Generating the street…"
               : stage === "failed"

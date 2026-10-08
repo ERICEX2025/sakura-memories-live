@@ -215,3 +215,4 @@ button:disabled {
 .call-root.walking .call-panel:first-child { opacity: 0; }
 .call-root.walking .call-phone { position: absolute; right: 24px; bottom: 210px; height: 34dvh; z-index: 4; }
 .call-root.walking .call-textbox { z-index: 4; background: linear-gradient(180deg, rgba(42, 20, 40, 0.75), rgba(20, 12, 28, 0.85)); }
+.call-root.walking .call-grid > .call-panel:last-child { display: none; }
