@@ -23,10 +23,10 @@ const AUTO_CONNECT = { autoConnect: true };
 // Seconds of walking forward to reach the mall.
 const WALK_SECONDS = 12;
 
-export function WalkScene({ onArrive }: { onArrive: () => void }) {
+export function WalkScene({ onArrive, endless = false }: { onArrive: () => void; endless?: boolean }) {
   return (
     <LingbotWorld2Provider jwtToken={fetchToken} connectOptions={AUTO_CONNECT}>
-      <World onArrive={onArrive} />
+      <World onArrive={onArrive} endless={endless} />
     </LingbotWorld2Provider>
   );
 }
@@ -35,7 +35,7 @@ type Move = "idle" | "forward" | "back";
 type Strafe = "idle" | "strafe_left" | "strafe_right";
 type Look = "idle" | "left" | "right";
 
-function World({ onArrive }: { onArrive: () => void }) {
+function World({ onArrive, endless }: { onArrive: () => void; endless: boolean }) {
   const lw2 = useLingbotWorld2();
   const lw2Ref = useRef(lw2);
   lw2Ref.current = lw2;
@@ -134,13 +134,13 @@ function World({ onArrive }: { onArrive: () => void }) {
       last = now;
       const next = Math.min(1, walked / WALK_SECONDS);
       setProgress(next);
-      if (next >= 1 && !arrivedRef.current) {
+      if (next >= 1 && !arrivedRef.current && !endless) {
         arrivedRef.current = true;
         setTimeout(() => onArriveRef.current(), 600);
       }
     }, 200);
     return () => clearInterval(timer);
-  }, []);
+  }, [endless]);
 
   // World models drift on long walks: keep reminding it of the street.
   useEffect(() => {

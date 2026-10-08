@@ -113,6 +113,10 @@ function GameFlow() {
                 <span className="font-vn">はじめる</span>
                 <span className="block text-xs text-zinc-600">Start</span>
               </button>
+              <a className="vn-choice !w-56" href="/walk">
+                <span className="font-vn">散歩する</span>
+                <span className="block text-xs text-zinc-600">Walk the world</span>
+              </a>
               <button className="vn-choice !w-56" onClick={() => setScreen("choose")}>
                 <span className="font-vn">電話する</span>
                 <span className="block text-xs text-zinc-600">Skip to the call</span>
