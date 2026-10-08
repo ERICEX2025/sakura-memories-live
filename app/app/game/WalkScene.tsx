@@ -40,6 +40,7 @@ export function WalkScene({
   anchor = ANCHOR,
   prompt = PROMPT,
   controls = true,
+  explore = true,
 }: {
   onArrive: () => void;
   endless?: boolean;
@@ -48,8 +49,10 @@ export function WalkScene({
   /** The painted image the world starts from; a new one re-anchors it. */
   anchor?: string;
   prompt?: string;
-  /** WASD walking and the walk HUD; off for a living scene you only watch. */
+  /** The walk's HUD: progress to the destination and arrival. */
   controls?: boolean;
+  /** WASD and arrow keys move the camera (every scene can be explored). */
+  explore?: boolean;
 }) {
   return (
     <LingbotWorld2Provider jwtToken={fetchToken} connectOptions={AUTO_CONNECT}>
@@ -60,6 +63,7 @@ export function WalkScene({
         anchor={anchor}
         basePrompt={prompt}
         controls={controls}
+        explore={explore}
       />
     </LingbotWorld2Provider>
   );
@@ -76,6 +80,7 @@ function World({
   anchor,
   basePrompt,
   controls,
+  explore,
 }: {
   onArrive: () => void;
   endless: boolean;
@@ -83,7 +88,10 @@ function World({
   anchor: string;
   basePrompt: string;
   controls: boolean;
+  explore: boolean;
 }) {
+  const exploreRef = useRef(explore);
+  exploreRef.current = explore;
   const moodDef = WORLD_MOODS.find((m) => m.id === mood) ?? null;
   const prompt = moodDef ? `${basePrompt}, ${moodDef.prompt}` : basePrompt;
   const controlsRef = useRef(controls);
@@ -178,7 +186,7 @@ function World({
     };
     const keys = ["w", "a", "s", "d", "arrowleft", "arrowright", "arrowup", "arrowdown"];
     const down = (event: KeyboardEvent) => {
-      if (event.target instanceof HTMLInputElement || !controlsRef.current) return;
+      if (event.target instanceof HTMLInputElement || !exploreRef.current) return;
       const key = event.key.toLowerCase();
       if (!keys.includes(key) || held.has(key)) return;
       event.preventDefault();
@@ -256,7 +264,7 @@ function World({
       {!controls && (
         <div className="world-badge">
           <span className={`h-1.5 w-1.5 rounded-full ${stage === "walking" && video ? "bg-emerald-400" : "bg-amber-300"}`} />
-          {stage === "walking" && video ? "Live world · LingBot World 2" : "Generating the scene…"}
+          {stage === "walking" && video ? "Live world · WASD to explore · ← → to look" : "Generating the scene…"}
         </div>
       )}
       {controls && (
