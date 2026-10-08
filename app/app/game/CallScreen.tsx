@@ -9,6 +9,7 @@ import { ViduS2AvatarMainVideoView } from "../lib/model";
 import { useSession } from "../lib/session";
 import { paintedOf } from "../lib/story";
 import { CAST } from "./cast";
+import { SpriteAvatar } from "./SpriteAvatar";
 import type { HeroineId } from "./types";
 import type { useAudio } from "./useAudio";
 
@@ -41,6 +42,8 @@ export function CallScreen({
   const { character, route, beat, beatIndex, affection, mood, aside, ending, thinking, choices, tatsumi } =
     director;
   const [draft, setDraft] = useState("");
+  // Hand-drawn keyframes driven by her live voice, or Reactor's raw video.
+  const [view, setView] = useState<"sprite" | "video">("sprite");
   const self = useRef<HTMLVideoElement>(null);
   const plate = CAST[heroine]!;
 
@@ -155,9 +158,10 @@ export function CallScreen({
             <ViduS2AvatarMainVideoView
               audioTrack="main_audio"
               videoObjectFit="cover"
-              className={`absolute inset-0 h-full w-full ${showVideo ? "" : "invisible"}`}
+              className={`absolute inset-0 h-full w-full ${showVideo && view === "video" ? "" : "invisible"}`}
             />
           )}
+          {showVideo && view === "sprite" && <SpriteAvatar heroine={heroine} />}
           {!showVideo && photo && (
             <img src={photo.url} alt="" className="absolute inset-0 h-full w-full object-cover" />
           )}
@@ -194,6 +198,9 @@ export function CallScreen({
                 {micMuted ? "🎙️ Unmute" : "🎙️ Mute"}
               </button>
               <button className="call-btn" onClick={session.interrupt}>✋ Interrupt</button>
+              <button className="call-btn" onClick={() => setView((v) => (v === "sprite" ? "video" : "sprite"))}>
+                {view === "sprite" ? "🎞️ Live video" : "✏️ Sprite"}
+              </button>
               <button className="call-btn !border-red-400/60 !text-red-200" onClick={() => void session.endCall()}>
                 Hang up
               </button>
