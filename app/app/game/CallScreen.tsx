@@ -225,7 +225,7 @@ export function CallScreen({
         {/* Controls */}
         <aside className="call-panel justify-end">
           {active && (
-            <div className="flex flex-wrap gap-2">
+            <div className="call-controls flex flex-wrap gap-2">
               <button className="call-btn" onClick={session.toggleMic}>
                 {micMuted ? "🎙️ Unmute" : "🎙️ Mute"}
               </button>
@@ -238,7 +238,7 @@ export function CallScreen({
               </button>
             </div>
           )}
-          <button className="call-btn self-start" onClick={onExit}>
+          <button className="call-btn call-title self-start" onClick={onExit}>
             ← Title
           </button>
         </aside>

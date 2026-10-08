@@ -316,3 +316,11 @@ button:disabled {
 .call-root.walking .call-textbox .call-choice:nth-child(n+2) { display: none; }
 .call-root.walking .walk-hud { top: 12px; padding: 8px 14px; background: rgba(20, 10, 22, 0.4); }
 .call-root.walking .call-phone { height: min(48dvh, 460px); }
+/* In a world: call controls sit under her call window, FaceTime-style. */
+.call-root.in-world .call-grid > .call-panel:last-child {
+  position: absolute; right: 28px; top: calc(24px + min(calc(100dvh - 250px), 640px) + 12px);
+  width: min(calc((100dvh - 250px) * 0.75), 480px); max-width: none; align-items: center; gap: 0;
+}
+.call-root.in-world .call-controls { flex-wrap: nowrap; justify-content: center; gap: 6px; padding: 6px; border-radius: 999px; background: rgba(20, 10, 22, 0.6); backdrop-filter: blur(6px); }
+.call-root.in-world .call-controls .call-btn { border-radius: 999px; font-size: 12px; padding: 5px 11px; white-space: nowrap; }
+.call-root.in-world .call-title { position: fixed; right: 24px; bottom: 18px; left: auto; top: auto; font-size: 11px; padding: 4px 10px; opacity: 0.8; z-index: 5; }
