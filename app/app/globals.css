@@ -301,3 +301,18 @@ button:disabled {
 .petals span { position: absolute; top: -5%; width: 12px; height: 9px; border-radius: 60% 0 60% 0; background: radial-gradient(circle at 30% 30%, #ffe4ec, #ffa8c0); opacity: 0.9; animation-name: petalfall; animation-timing-function: linear; animation-iteration-count: infinite; }
 @keyframes petalfall { 0% { transform: translate(0, 0) rotate(0) } 50% { transform: translate(-40px, 55vh) rotate(200deg) } 100% { transform: translate(30px, 110vh) rotate(420deg) } }
 @media (prefers-reduced-motion: reduce) { .ken-burns, .petals span { animation: none } }
+
+/* Immersive: in a living world the dialogue gets out of the way. */
+.call-root.in-world .call-textbox {
+  position: absolute; left: 24px; bottom: 18px; margin: 0; transform: none;
+  width: min(760px, calc(100vw - 48px)); min-height: 0; padding: 16px 18px 10px;
+}
+.call-root.in-world .call-textbox > p.font-vn { font-size: clamp(14px, 1.25vw, 17px) !important; line-height: 1.45; }
+.call-root.in-world .call-choice { font-size: 12.5px; padding: 4px 10px; }
+.call-root.in-world .call-grid { padding-bottom: 0; }
+/* Walking: just her caption, slim and low, so the street is the screen. */
+.call-root.walking .call-textbox { width: min(620px, calc(100vw - 48px)); background: rgba(20, 10, 22, 0.5); border-color: rgba(255, 175, 195, 0.3); }
+.call-root.walking .call-textbox > p.font-vn { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.call-root.walking .call-textbox .call-choice:nth-child(n+2) { display: none; }
+.call-root.walking .walk-hud { top: 12px; padding: 8px 14px; background: rgba(20, 10, 22, 0.4); }
+.call-root.walking .call-phone { height: min(48dvh, 460px); }
