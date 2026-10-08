@@ -46,22 +46,22 @@ export const ROUTES: Record<string, Route> = {
     beats: [
       {
         id: "library",
-        title: "Chapter 1 · The Library",
-        background: "/bg/study_space.png",
+        title: "Chapter 1 · The Rock",
+        background: "/bg/rock_room.png",
         school: true,
         worldPrompt:
-          "Anime visual novel background art, a quiet university library study room, warm late-afternoon sunlight through tall windows, dust motes drifting in the light, open books and notebooks on the tables, soft ambient motion, painterly Makoto Shinkai style, camera still",
+          "Anime visual novel background art, a study room inside Brown University's Rockefeller Library in Providence, warm late-afternoon sunlight through tall windows, dust motes drifting in the light, open books and notebooks on the tables, soft ambient motion, painterly Makoto Shinkai style, camera still",
         situation:
-          "It is 4pm and you are in the library with the player working on Tatsumi-sensei's group project. You did a few minutes of work and now you are bored and want to quit early, since the deadline is the day after tomorrow. Whine playfully and try to get out of finishing your part. You will only agree to finish if the player motivates you, and you would love it if they offered to take you for boba (tapioca milk tea) afterwards. If they look tired or bored on camera, tease them that they are just as sleepy as you.",
+          "It is 4pm and you are in the Rock (Brown's Rockefeller Library) with the player working on Tatsumi-sensei's group project. You did a few minutes of work and now you are bored and want to quit early, since the deadline is the day after tomorrow. Whine playfully and try to get out of finishing your part. You will only agree to finish if the player motivates you, and you would love it if they offered to take you for boba (tapioca milk tea) afterwards. If they look tired or bored on camera, tease them that they are just as sleepy as you.",
         goal: "The player convinces Akari to finish her part of the project today, ideally by offering a fun reward like going for boba together.",
-        narration: "4pm, the library. Akari is already slumping over her notebook...",
+        narration: "4pm, the Rock. Akari is already slumping over her notebook...",
       },
       {
         id: "tiger-sugar",
         title: "Chapter 2 · Tiger Sugar",
         background: "/bg/tiger_sugar.png",
         worldPrompt:
-          "Anime visual novel background art, a cozy bubble tea shop at golden hour, brown sugar boba drinks on the counter, warm hanging lights, gentle steam rising, people chatting softly in the background, painterly Makoto Shinkai style, camera still",
+          "Anime visual novel background art, the cozy Tiger Sugar bubble tea shop on Thayer Street in Providence at golden hour, brown sugar boba drinks on the counter, warm hanging lights, gentle steam rising, people chatting softly in the background, painterly Makoto Shinkai style, camera still",
         situation:
           "You finished the project and the player took you to Tiger Sugar for boba. You are thrilled and chatting about drinks. Then you ask whether they're free on Saturday, because you want them to come to the mall with you, half-jokingly to carry your shopping bags. If they refuse, pout ('puku~ I'm not a spoiled brat!'). Watch their face when you ask: if they smile or look happy, treat it as a yes and cheer. If they agree, insist on a pinky promise: 'yubikiri genman, uso tsuitara hari senbon nomasu, yubi kitta!'",
         goal: "The player agrees to go to the mall with Akari on Saturday.",
@@ -73,7 +73,7 @@ export const ROUTES: Record<string, Route> = {
         background: "/bg/way_to_mall_1.png",
         walk: true,
         worldPrompt:
-          "Anime visual novel background art, a calm city sidewalk on a sunny spring Saturday, rows of cherry blossom trees in full bloom, pink petals drifting through the air, soft warm afternoon light, the entrance of a large shopping mall ahead, painterly Makoto Shinkai style, gentle walking pace",
+          "Anime visual novel background art, a College Hill sidewalk in Providence, Rhode Island on a sunny spring Saturday, old New England houses, rows of cherry blossom trees in full bloom, pink petals drifting through the air, soft warm afternoon light, walking downhill toward Providence Place mall, painterly Makoto Shinkai style, gentle walking pace",
         situation:
           "It is Saturday. You met the player on time for once (you are very proud of it) and now you are walking side by side down a street lined with blooming cherry blossoms toward Providence Place mall. Gush about the sakura and the petals, chat about what you want to shop for, tease them lightly, and thank them a little shyly for coming. Now and then react to the sky and the weather around you (the petals swirling, the sun starting to set, maybe rain clouds, festival lanterns) since the world changes as you walk. Keep it short and playful, like chatting while walking.",
         goal: "The player walks to the mall with Akari (the game advances this when they arrive).",
@@ -84,7 +84,7 @@ export const ROUTES: Record<string, Route> = {
         title: "Chapter 3 · Saturday at the Mall",
         background: "/bg/mall_1.png",
         worldPrompt:
-          "Anime visual novel background art, a bright modern shopping mall atrium on a Saturday, boutique windows with spring fashion, skylights, people strolling, soft reflections on polished floors, painterly Makoto Shinkai style, camera still",
+          "Anime visual novel background art, the bright atrium of Providence Place mall in downtown Providence on a Saturday, boutique windows with spring fashion, skylights, people strolling, soft reflections on polished floors, painterly Makoto Shinkai style, camera still",
         outfit: "/characters/sakura/akari_date_outfit.jpg",
         situation:
           "It is Saturday and you are shopping at Providence Place mall with the player. You were on time for once and are proud of it. Hold up outfits and ask 'does this suit me?' and react to their answers; you get annoyed if they are lazy or say 'whatever'. Also playfully rate what the player is wearing on camera and suggest something for them. Near the end, thank them sincerely, shyly ask if they want to go again next month, then tease: 'Hey, don't we kind of look like a couple? ...Just kidding! Got you!'",

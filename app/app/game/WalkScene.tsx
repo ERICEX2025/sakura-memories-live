@@ -18,7 +18,7 @@ import { fetchToken } from "../ViduApp";
 
 const ANCHOR = "/bg/painted/way_to_mall_1.jpg";
 const PROMPT =
-  "Anime visual novel background art, a calm city sidewalk on a sunny spring Saturday, rows of cherry blossom trees in full bloom, pink petals drifting through the air, soft warm afternoon light, the entrance of a large shopping mall ahead, painterly Makoto Shinkai style, gentle walking pace";
+  "Anime visual novel background art, a College Hill sidewalk in Providence, Rhode Island on a sunny spring Saturday, old New England houses, rows of cherry blossom trees in full bloom, pink petals drifting through the air, soft warm afternoon light, walking downhill toward Providence Place mall, painterly Makoto Shinkai style, gentle walking pace";
 const AUTO_CONNECT = { autoConnect: true };
 // Things said during the walk reshape the world: a word in the conversation
 // picks a mood, and the mood is appended to the prompt.
