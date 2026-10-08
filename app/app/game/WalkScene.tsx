@@ -105,7 +105,10 @@ function World({
   useEffect(() => {
     if (lw2.status !== "disconnected" || startedRef.current) return;
     const timer = setTimeout(() => {
-      void lw2Ref.current.connect().catch(() => setStage("failed"));
+      void lw2Ref.current.connect().catch((error: unknown) => {
+        setFailure(error instanceof Error ? error.message : String(error));
+        setStage("failed");
+      });
     }, 3000);
     return () => clearTimeout(timer);
   }, [lw2.status]);
@@ -114,9 +117,12 @@ function World({
   // in place (same session, so seconds instead of a fresh connect) whenever
   // the scene moves to a new anchor.
   const builtRef = useRef<string | null>(null);
+  // A failed build retries a few times (the GPU pool is busy at events).
+  const [attempt, setAttempt] = useState(0);
+  const [failure, setFailure] = useState<string | null>(null);
   useEffect(() => {
     if (lw2.status !== "ready" || builtRef.current === anchor) return;
-    const rebuild = builtRef.current !== null;
+    const rebuild = builtRef.current !== null || attempt > 0;
     builtRef.current = anchor;
     startedRef.current = true;
     setStage("building");
@@ -124,19 +130,28 @@ function World({
     (async () => {
       try {
         const api = lw2Ref.current;
-        if (rebuild) await api.reset();
+        if (rebuild) await api.reset().catch(() => undefined);
         const blob = await (await fetch(anchor)).blob();
         const ref = await api.uploadFile(new File([blob], "scene.jpg", { type: blob.type }));
         await api.setImage({ image: ref });
         await api.setPrompt({ prompt: promptRef.current });
         await api.setRotationSpeedDeg({ rotation_speed_deg: 1.5 });
         await api.start();
-        if (builtRef.current === anchor) setStage("walking");
-      } catch {
-        setStage("failed");
+        if (builtRef.current === anchor) {
+          setStage("walking");
+          setFailure(null);
+        }
+      } catch (error) {
+        setFailure(error instanceof Error ? error.message : String(error));
+        if (attempt < 3) {
+          builtRef.current = null;
+          setTimeout(() => setAttempt((a) => a + 1), 2500);
+        } else {
+          setStage("failed");
+        }
       }
     })();
-  }, [lw2.status, anchor]);
+  }, [lw2.status, anchor, attempt]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // First frames: show the video instead of the still.
   useEffect(() => {
@@ -257,9 +272,11 @@ function World({
               ? "Waiting for a world-model GPU…"
               : `Opening the world… ${lw2.lastError ? `(${lw2.lastError.message})` : ""}`
             : stage === "building"
-              ? "Generating the street…"
+              ? attempt > 0
+                ? `Retrying the world… (${attempt}/3)`
+                : "Generating the street…"
               : stage === "failed"
-                ? "The world model is busy. Take the shortcut →"
+                ? `The world model is busy right now${failure ? ` (${failure})` : ""}. Take the shortcut →`
                 : "W to walk · A/D to step aside · ← → to look around"}
         </div>
         <button className="call-btn mt-2" onClick={arrive}>
