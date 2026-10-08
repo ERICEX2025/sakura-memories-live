@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 // connect().
 const MODEL_NAME = "reactor/vidu-s2-avatar";
 // Sessions one token may ever create (closed sessions still count).
-const MAX_SESSIONS = 10;
+const MAX_SESSIONS = 50;
 // 1h keeps a memoized token — and its session budget — from outliving a visit.
 const TOKEN_LIFETIME_SECONDS = 60 * 60;
 

@@ -164,6 +164,11 @@ export function CallScreen({
             <span className="opacity-70">{live ? `LIVE ${clock(elapsed)}` : active ? "Connecting" : "Calling"}</span>
           </div>
           {caption && <div className="call-caption">{caption}</div>}
+          {notice && !active && busy === null && character && (
+            <button className="call-btn absolute top-12 left-1/2 -translate-x-1/2" onClick={() => session.chooseCharacter(character)}>
+              ↻ Retry
+            </button>
+          )}
           {!active && !ending && (
             <button
               className="call-answer"

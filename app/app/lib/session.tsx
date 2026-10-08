@@ -114,7 +114,7 @@ export function useSession(): SessionValue {
 // it. A connected session bills whether or not a call is running.
 const IDLE_DISCONNECT_MS = 2 * 60_000;
 // How long to wait for the model's first snapshot after connecting.
-const FIRST_SNAPSHOT_TIMEOUT_MS = 15_000;
+const FIRST_SNAPSHOT_TIMEOUT_MS = 30_000;
 const TRANSCRIPT_CEILING = 60;
 
 const EMPTY_SETUP: CallSetup = {
@@ -140,10 +140,19 @@ function bindKey(photo: Photo): string {
   return photo.file ? photo.key : `${photo.key}|${photo.url}`;
 }
 
+// Pre-built heroines (same Reactor account), so a fresh browser, like the
+// deployed site's, reattaches instead of building. Rebuilt when the image
+// version changes.
+const PREBUILT: [string, string][] = [
+  ["akari|/characters/sakura/akari_avatar.jpg?v=2", "1005815927821840384"],
+  ["miyuki|/characters/sakura/miyuki_avatar.jpg?v=3", "1005820819957362688"],
+  ["tsukiko|/characters/sakura/tsukiko_avatar.jpg?v=3", "1005821118902185984"],
+];
+
 function loadBound(): Map<string, string> {
   try {
     const raw = typeof window === "undefined" ? null : localStorage.getItem(BOUND_STORAGE);
-    return new Map(raw ? (JSON.parse(raw) as [string, string][]) : []);
+    return new Map([...PREBUILT, ...(raw ? (JSON.parse(raw) as [string, string][]) : [])]);
   } catch {
     return new Map();
   }
