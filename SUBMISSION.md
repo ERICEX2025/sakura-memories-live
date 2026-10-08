@@ -10,7 +10,7 @@
 - **One-line description:**
   > My 2023 anime visual novel, rebuilt so its hand-drawn heroines video-call you live (Reactor Vidu S2 avatars that see and hear you, with a Gemini director rewriting the story mid-call) and Saturday's date is a walkable LingBot World 2 world.
 - **Demo link:** backup video URL (YouTube unlisted or Drive), plus the live URL above
-- **Repo:** push to GitHub first, then paste the link (optional)
+- **Repo:** https://github.com/ERICEX2025/sakura-memories-live
 - **Social post link:** X or LinkedIn (worth +1 extra credit)
 
 **Tracks:** Interactive Narrative is the primary fit. Best Avatar Use Case is the secondary fit.
