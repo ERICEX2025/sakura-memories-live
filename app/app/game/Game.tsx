@@ -123,6 +123,13 @@ function GameFlow() {
               </button>
             </div>
           </div>
+          <a
+            href="/about"
+            onClick={(e) => e.stopPropagation()}
+            className="absolute right-3 bottom-3 z-10 rounded-full bg-black/40 px-3 py-1 text-[clamp(10px,1vw,13px)] text-white/70 backdrop-blur-sm transition hover:bg-black/60 hover:text-white"
+          >
+            ⓘ About this project
+          </a>
         </div>
       )}
 
