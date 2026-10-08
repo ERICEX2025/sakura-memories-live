@@ -41,6 +41,11 @@ function GameFlow() {
   const { chooseCharacter, endSession } = useSession();
   const { skipBeat } = useDirector();
   const [screen, setScreen] = useState<Screen>("title");
+  // Demo jump link: `?start=akari` goes straight to her call.
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get("start");
+    if (id === "akari" || id === "miyuki" || id === "tsukiko") pick(id);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const [chapter, setChapter] = useState(0);
   const [name, setName] = useState("");
   const [heroine, setHeroine] = useState<HeroineId | null>(null);

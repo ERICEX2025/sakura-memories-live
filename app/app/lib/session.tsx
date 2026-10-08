@@ -31,7 +31,7 @@ import {
   type ReferenceKind,
 } from "./call";
 import type { Character } from "./characters";
-import { personaFor } from "./story";
+import { personaFor, startBeat } from "./story";
 
 // The one place the call flow lives.
 //
@@ -468,7 +468,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       const catalog = voicesRef.current;
       setSetup((current) => ({
         ...current,
-        persona: personaFor(character, 0),
+        persona: personaFor(character, startBeat()),
         greeting: character.greeting,
         callMode: "video",
         voice: catalog ? matchVoice(catalog, character.voice) : "",

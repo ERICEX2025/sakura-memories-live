@@ -13,7 +13,7 @@ import {
 import { CHARACTERS, type Character } from "./characters";
 import { useSession, type Line } from "./session";
 import { TATSUMI_INTERRUPTS } from "../game/chapters";
-import { FAIL_AFFECTION, paintedOf, personaFor, ROUTES, type Beat, type Route } from "./story";
+import { FAIL_AFFECTION, paintedOf, personaFor, ROUTES, startBeat, type Beat, type Route } from "./story";
 
 // The story layer over the live call.
 //
@@ -87,7 +87,7 @@ export function DirectorProvider({ children }: { children: ReactNode }) {
   const character = CHARACTERS.find((c) => c.id === photo?.key) ?? null;
   const route = character ? (ROUTES[character.id] ?? null) : null;
 
-  const [beatIndex, setBeatIndex] = useState(0);
+  const [beatIndex, setBeatIndex] = useState(startBeat);
   const [affection, setAffection] = useState(0);
   const [mood, setMood] = useState<Mood>("neutral");
   const [aside, setAside] = useState<string | null>(null);
@@ -109,7 +109,7 @@ export function DirectorProvider({ children }: { children: ReactNode }) {
   const heroineKey = photo?.key;
   useEffect(() => {
     if (phase !== "starting" && phase !== "avatar_ready" && heroineKey === undefined) return;
-    setBeatIndex(0);
+    setBeatIndex(Math.min(startBeat(), (route?.beats.length ?? 1) - 1));
     setAffection(0);
     setMood("neutral");
     setAside(null);

@@ -203,6 +203,13 @@ export const FAIL_AFFECTION = -4;
 
 let playerName = "";
 
+/** Demo jump links: `?beat=N` starts a heroine's route at chapter N. */
+export function startBeat(): number {
+  if (typeof window === "undefined") return 0;
+  const n = Number(new URLSearchParams(window.location.search).get("beat") ?? 0);
+  return Number.isFinite(n) && n > 0 ? Math.floor(n) : 0;
+}
+
 /** The player's name from the visual novel, so she can use it. */
 export function setPlayerName(name: string) {
   playerName = name;
