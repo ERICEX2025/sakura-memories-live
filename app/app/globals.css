@@ -324,3 +324,76 @@ button:disabled {
 .call-root.in-world .call-controls { flex-wrap: nowrap; justify-content: center; gap: 6px; padding: 6px; border-radius: 999px; background: rgba(20, 10, 22, 0.6); backdrop-filter: blur(6px); }
 .call-root.in-world .call-controls .call-btn { border-radius: 999px; font-size: 12px; padding: 5px 11px; white-space: nowrap; }
 .call-root.in-world .call-title { position: fixed; right: 24px; bottom: 18px; left: auto; top: auto; font-size: 11px; padding: 4px 10px; opacity: 0.8; z-index: 5; }
+
+/* ══ Itch theme: the original Sakura Memories page ══════════════════════
+   Pink line-art sakura pattern, white panels, Alike serif, #f37885 accent. */
+:root {
+  --sakura: #f37885;
+  --sakura-dark: #db606d;
+  --blush: #fec2c5;
+  --ink: #222222;
+  --ink-soft: #5b4f50;
+  --pattern: #fbd3d6 url(/brand/sakura-pattern.png) repeat;
+}
+body { font-family: "Alike", Georgia, serif; }
+::selection { color: #fff; background: var(--sakura); }
+
+/* Dialogue: white page with a sakura edge, like the itch column. */
+.vn-textbox, .call-textbox {
+  background: rgba(255, 255, 255, 0.94) !important;
+  border: 2px solid var(--sakura) !important;
+  box-shadow: 0 8px 30px rgba(91, 79, 80, 0.25) !important;
+  backdrop-filter: none;
+}
+.vn-textbox p, .call-textbox p { color: var(--ink) !important; }
+.vn-textbox p + p, .call-textbox p + p { color: var(--ink-soft) !important; font-family: "Alike", Georgia, serif; }
+.vn-textbox p.italic, .call-textbox p.italic { color: #554949 !important; }
+.vn-plate { color: #fff !important; text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25); border: 2px solid #fff; }
+.vn-next { color: var(--sakura); }
+.call-textbox input { background: #fff !important; border-color: #d8d8d8 !important; color: var(--ink) !important; }
+.call-textbox input::placeholder { color: #9a8f90; }
+
+/* Choices and buttons: itch's white cards and pink buttons. */
+.vn-choice {
+  background: #fff; color: var(--ink); border: 2px solid var(--sakura); border-radius: 4px;
+  font-family: "Alike", Georgia, serif; box-shadow: 0 4px 14px rgba(91, 79, 80, 0.18);
+}
+.vn-choice:hover { background: #fff3f4; }
+.vn-choice span.text-zinc-600, .vn-choice .text-xs { color: var(--ink-soft) !important; }
+.call-btn, .call-root.in-world .call-controls .call-btn {
+  background: var(--sakura); color: #fff; border: none; border-radius: 4px;
+  text-shadow: 0 1px 0 var(--sakura-dark); font-weight: bold; font-family: "Alike", Georgia, serif;
+}
+.call-btn:hover { background: var(--sakura-dark); }
+.call-choice { background: #fff; color: var(--ink); border: 1.5px solid var(--sakura); border-radius: 4px; font-family: "Alike", Georgia, serif; }
+.call-choice:hover { background: #fff3f4; }
+.call-choice span { color: var(--sakura-dark) !important; }
+.call-answer { font-family: "Alike", Georgia, serif; }
+
+/* Story panel and call chrome: light cards on the world. */
+.call-root.in-world .call-panel:first-child, .call-panel:first-child {
+  background: rgba(255, 255, 255, 0.92) !important; border-radius: 6px; padding: 12px 14px;
+  box-shadow: 0 6px 22px rgba(91, 79, 80, 0.22); backdrop-filter: none;
+}
+.call-panel:first-child * { color: var(--ink) !important; }
+.call-panel:first-child .tracking-widest, .call-panel:first-child .uppercase { color: var(--sakura-dark) !important; }
+.call-panel:first-child [title^="Affection"] { color: var(--sakura) !important; }
+.call-panel:first-child [title^="Affection"] span { color: var(--blush) !important; }
+.call-panel:first-child .rounded-lg { background: #fff3f4 !important; }
+.call-panel:first-child p.italic { color: var(--ink-soft) !important; }
+.call-root.in-world .call-controls { background: rgba(255, 255, 255, 0.85); box-shadow: 0 4px 16px rgba(91, 79, 80, 0.2); }
+.call-phone { box-shadow: 0 0 0 3px var(--sakura), 0 0 0 9px #fff, 0 24px 60px rgba(91, 79, 80, 0.35) !important; }
+.world-badge, .call-root.walking .walk-hud, .walk-hud { background: rgba(255, 255, 255, 0.85) !important; color: var(--ink) !important; }
+.walk-hud * { color: var(--ink) !important; }
+.walk-hud .bg-pink-400 { background: var(--sakura) !important; }
+.walk-toast { background: var(--sakura); text-shadow: 0 1px 0 var(--sakura-dark); }
+
+/* Before she picks up, and the ending: the itch page's sakura pattern. */
+.call-root { background: var(--pattern); background-size: 400px auto; }
+.call-bg { opacity: 0.35; filter: blur(10px) saturate(0.9) !important; }
+.call-ending { background: rgba(251, 211, 214, 0.86) !important; }
+.call-ending::before { content: ""; position: absolute; inset: 0; background: var(--pattern); background-size: 400px auto; opacity: 0.55; z-index: -1; }
+.call-ending { isolation: isolate; }
+.call-ending p, .call-ending div { color: var(--ink) !important; }
+.call-ending .text-pink-200 { color: var(--sakura-dark) !important; }
+.call-grid > .call-panel:first-child { align-self: start; height: auto; }

@@ -19,7 +19,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Alike&family=Zen+Maru+Gothic:wght@500;700;900&display=swap"
         />
       </head>
       <body className="min-h-screen bg-zinc-950 text-zinc-100 antialiased">

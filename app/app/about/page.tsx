@@ -119,10 +119,10 @@ export default function AboutPage() {
 
   return (
     <div className="about">
+      <div className="about-column">
       {/* ── Hero ── */}
       <header className="about-hero">
-        <img className="about-hero-bg" src="/vn/start_screen.png" alt="" />
-        <div className="about-hero-shade" />
+        <img className="about-banner" src="/vn/start_screen.png" alt="Sakura Memories key art" />
         <div className="about-wrap about-hero-inner">
           <p className="about-eyebrow">Reactor × Google DeepMind World Model Hackathon · NYC</p>
           <h1 className="about-title">
@@ -244,7 +244,7 @@ export default function AboutPage() {
               LingBot world you can walk around in.
             </p>
           </div>
-          <div className="about-gallery">
+          <div className="about-wrap about-gallery">
             {PLACES.map((p) => (
               <figure key={p.src}>
                 <img src={p.src} alt={p.cap} loading="lazy" />
@@ -291,6 +291,7 @@ export default function AboutPage() {
           </p>
         </div>
       </footer>
+      </div>
     </div>
   );
 }
