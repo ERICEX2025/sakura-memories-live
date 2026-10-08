@@ -26,7 +26,7 @@ const TOKEN_REFRESH_SKEW_MS = 60_000;
 let cachedToken: { jwt: string; expiresAtMs: number } | null = null;
 let inflightToken: Promise<string> | null = null;
 
-async function fetchToken(): Promise<string> {
+export async function fetchToken(): Promise<string> {
   if (
     cachedToken &&
     Date.now() < cachedToken.expiresAtMs - TOKEN_REFRESH_SKEW_MS

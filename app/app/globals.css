@@ -43,3 +43,151 @@ button:disabled {
   cursor: not-allowed;
 }
 @keyframes fadein { from { opacity: 0 } to { opacity: 1 } }
+
+/* ── Sakura Memories VN ─────────────────────────────────────────────── */
+.font-vn { font-family: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", system-ui, sans-serif; }
+
+.vn-stage {
+  position: relative;
+  width: min(100vw, calc(100dvh * 16 / 9));
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #000;
+  cursor: pointer;
+  user-select: none;
+}
+.vn-layer { position: absolute; inset: 0; width: 100%; height: 100%; }
+.vn-fade { animation: fadein 0.6s ease; }
+.vn-sprite {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  height: 96%;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.35));
+}
+.vn-textbox {
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  bottom: 3.5%;
+  min-height: 24%;
+  padding: 2.2% 3% 2%;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(42, 20, 40, 0.86), rgba(20, 12, 28, 0.92));
+  border: 1.5px solid rgba(255, 175, 195, 0.55);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+}
+.vn-plate {
+  position: absolute;
+  top: 0;
+  left: 3%;
+  transform: translateY(-60%);
+  padding: 0.25em 1em;
+  border-radius: 8px;
+  color: #1b1020;
+  font-family: "Zen Maru Gothic", system-ui, sans-serif;
+  font-weight: 900;
+  font-size: clamp(13px, 1.5vw, 19px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+}
+.vn-next {
+  position: absolute;
+  right: 2.5%;
+  bottom: 8%;
+  color: #ffafc3;
+  font-size: 12px;
+  animation: bob 1s ease-in-out infinite;
+}
+.vn-choice {
+  width: min(70%, 560px);
+  padding: 0.7em 1.2em;
+  border-radius: 12px;
+  background: rgba(255, 248, 250, 0.94);
+  color: #2a1428;
+  border: 2px solid #ff9db3;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.vn-choice:hover { transform: scale(1.03); background: #fff; }
+@keyframes bob { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(3px) } }
+@media (prefers-reduced-motion: reduce) { .vn-fade, .vn-next { animation: none } }
+
+/* ── The call ───────────────────────────────────────────────────────── */
+.call-root { position: relative; width: 100vw; height: 100dvh; overflow: hidden; background: #120a14; }
+.call-bg { position: absolute; inset: -4%; width: 108%; height: 108%; object-fit: cover; filter: blur(14px) brightness(0.42) saturate(0.85); }
+.call-grid {
+  position: relative;
+  height: calc(100dvh - 190px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 24px;
+  padding: 24px 24px 0;
+  align-items: stretch;
+}
+.call-panel { display: flex; flex-direction: column; gap: 12px; min-width: 0; max-width: 360px; }
+.call-grid > .call-panel:last-child { justify-self: end; align-items: flex-end; }
+.call-phone {
+  position: relative;
+  height: 100%;
+  aspect-ratio: 3 / 4;
+  max-width: 100%;
+  border-radius: 28px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 0 0 3px rgba(255, 131, 154, 0.6), 0 0 0 10px rgba(20, 10, 22, 0.85), 0 30px 80px rgba(0, 0, 0, 0.7);
+}
+.call-status {
+  position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 8px;
+  padding: 4px 12px; border-radius: 999px; background: rgba(0, 0, 0, 0.55);
+  color: #fff; font-size: 12px; backdrop-filter: blur(6px); white-space: nowrap;
+}
+.call-caption {
+  position: absolute; bottom: 90px; left: 50%; transform: translateX(-50%);
+  padding: 6px 14px; border-radius: 10px; background: rgba(0, 0, 0, 0.65); color: #fde7ee; font-size: 13px; white-space: nowrap;
+}
+.call-answer {
+  position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+  padding: 12px 34px; border-radius: 999px; background: #2fbf71; color: #fff; font-weight: 700; font-size: 17px;
+  box-shadow: 0 8px 24px rgba(47, 191, 113, 0.45); cursor: pointer; animation: ring 1.2s ease-in-out infinite;
+}
+.call-answer:disabled { background: #555; box-shadow: none; animation: none; cursor: wait; }
+@keyframes ring { 0%, 100% { transform: translateX(-50%) rotate(0) } 10% { transform: translateX(-50%) rotate(-6deg) } 20% { transform: translateX(-50%) rotate(6deg) } 30% { transform: translateX(-50%) rotate(0) } }
+.call-self { position: absolute; right: 12px; bottom: 12px; width: 26%; border-radius: 12px; border: 2px solid rgba(255, 255, 255, 0.5); transform: scaleX(-1); object-fit: cover; }
+.call-btn {
+  padding: 6px 12px; border-radius: 10px; border: 1px solid rgba(255, 175, 195, 0.45);
+  background: rgba(0, 0, 0, 0.45); color: #fde7ee; font-size: 13px; cursor: pointer;
+}
+.call-btn:hover { background: rgba(255, 131, 154, 0.2); }
+.call-textbox {
+  position: absolute; left: 50%; bottom: 20px; transform: translateX(-50%);
+  width: min(1100px, calc(100vw - 32px)); min-height: 140px;
+  padding: 22px 24px 14px; border-radius: 16px;
+  background: linear-gradient(180deg, rgba(42, 20, 40, 0.9), rgba(20, 12, 28, 0.95));
+  border: 1.5px solid rgba(255, 175, 195, 0.55); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+.call-choice {
+  padding: 6px 12px; border-radius: 10px; background: rgba(255, 248, 250, 0.94); color: #2a1428;
+  border: 1.5px solid #ff9db3; font-size: 14px; cursor: pointer; text-align: left;
+}
+.call-choice:hover { background: #fff; }
+.call-ending {
+  position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+  padding: 24px; background: rgba(10, 4, 12, 0.82); backdrop-filter: blur(6px);
+}
+.choose-card { position: relative; height: 100%; cursor: pointer; transition: transform 0.2s ease, filter 0.2s ease; filter: brightness(0.85); }
+.choose-card:hover { transform: translateY(-2%) scale(1.03); filter: brightness(1.05) drop-shadow(0 0 18px rgba(255, 160, 190, 0.6)); }
+.choose-name {
+  position: absolute; bottom: 4%; left: 50%; transform: translateX(-50%);
+  padding: 4px 14px; border-radius: 8px; color: #1b1020; font-weight: 800; white-space: nowrap; font-size: clamp(12px, 1.4vw, 18px);
+}
+@media (max-width: 900px) {
+  .call-grid { grid-template-columns: 1fr; height: auto; }
+  .call-phone { height: 55dvh; justify-self: center; }
+  .call-panel { max-width: none; }
+  .call-textbox { position: relative; left: auto; transform: none; margin: 16px auto; }
+  .call-root { height: auto; min-height: 100dvh; }
+}

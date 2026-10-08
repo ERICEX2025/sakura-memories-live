@@ -127,6 +127,35 @@ async function exampleFile(photo: Photo): Promise<File> {
   return new File([blob], `${photo.key}.jpg`, { type: blob.type });
 }
 
+// Avatars the model has built, by character and image, kept across visits
+// (the model keeps an avatar for 90 days). A new image version gets a new key,
+// so it is built again.
+const BOUND_STORAGE = "sakura-avatars-v1";
+
+function bindKey(photo: Photo): string {
+  return photo.file ? photo.key : `${photo.key}|${photo.url}`;
+}
+
+function loadBound(): Map<string, string> {
+  try {
+    const raw = typeof window === "undefined" ? null : localStorage.getItem(BOUND_STORAGE);
+    return new Map(raw ? (JSON.parse(raw) as [string, string][]) : []);
+  } catch {
+    return new Map();
+  }
+}
+
+function saveBound(bound: Map<string, string>) {
+  try {
+    localStorage.setItem(
+      BOUND_STORAGE,
+      JSON.stringify([...bound].filter(([key]) => !key.startsWith("upload:"))),
+    );
+  } catch {
+    // Storage blocked: avatars are rebuilt next visit.
+  }
+}
+
 function message(error: unknown, fallback: string): string {
   return error instanceof Error && error.message ? error.message : fallback;
 }
@@ -170,7 +199,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   // Characters this page has made, by photo, so a later session reattaches
   // one with `attach_avatar` instead of building it again. The model keeps
   // an avatar for 90 days; persist this map if you want reuse across visits.
-  const boundRef = useRef(new Map<string, string>());
+  const boundRef = useRef(loadBound());
   // The binding `prepare()` is waiting to record: which photo, and the
   // avatar the session held before its command went out.
   const pendingBindRef = useRef<{ key: string; before: string | null } | null>(
@@ -207,6 +236,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       snapshot.avatar_id !== pending.before
     ) {
       boundRef.current.set(pending.key, snapshot.avatar_id);
+      saveBound(boundRef.current);
       pendingBindRef.current = null;
     }
   }, [snapshot?.phase, snapshot?.avatar_status, snapshot?.avatar_id]);
@@ -370,7 +400,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         }
         setBusy("preparing");
         pendingBindRef.current = {
-          key: next.key,
+          key: bindKey(next),
           before: snapshotRef.current?.avatar_id ?? null,
         };
         if (!voicesRef.current) {
@@ -378,7 +408,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
           const catalog = await modelRef.current.listVoices();
           if (catalog) setVoices(catalog);
         }
-        const saved = boundRef.current.get(next.key);
+        const saved = boundRef.current.get(bindKey(next));
         if (saved) {
           await modelRef.current.attachAvatar({ avatar_id: saved });
         } else {
@@ -460,7 +490,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     // A saved character expired or belongs elsewhere: forget it and build it
     // again from the same photo.
     if (error.code === "AVATAR_NOT_FOUND" && photoRef.current) {
-      boundRef.current.delete(photoRef.current.key);
+      boundRef.current.delete(bindKey(photoRef.current));
+      saveBound(boundRef.current);
       void prepare(photoRef.current);
     }
   });
@@ -514,7 +545,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   );
 
   const cue = useCallback((narration: string) => {
-    const line = `(Stage direction, react in character: ${narration})`;
+    const line = `[${narration}]`;
     typedRef.current = [...typedRef.current, line];
     setTranscript((lines) =>
       [...lines, { speaker: "narrator" as const, text: narration }].slice(

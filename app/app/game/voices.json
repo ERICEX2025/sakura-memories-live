@@ -1,0 +1,5 @@
+{
+  "model": "gemini-3.8-flash-tts",
+  "tatsumi": { "id": "voice_40j5sdpb3yc0", "type": "prompted", "language_code": "ja-JP", "description": "A stern, gruff middle-aged Japanese man in his fifties, a university Japanese-language professor and native Japanese speaker, with a low gravelly baritone and clipped, dry, coach-like delivery." },
+  "narrator": { "id": "voice_55r0fnigtn86", "type": "prompted", "language_code": "en-US", "description": "A soft, warm young-adult woman narrating an anime visual novel, gentle and wistful, with a breathy mid pitch and unhurried storyteller pacing." }
+}

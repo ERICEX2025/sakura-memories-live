@@ -113,8 +113,23 @@ export const ROUTES: Record<string, Route> = {
 /** Affection at or below this ends the route badly. */
 export const FAIL_AFFECTION = -4;
 
-export function personaFor(character: Character, beatIndex: number): string {
+let playerName = "";
+
+/** The player's name from the visual novel, so she can use it. */
+export function setPlayerName(name: string) {
+  playerName = name;
+}
+
+// IDENTITY stays byte-identical across update_call; MEMORY carries what the
+// director learned so a persona swap does not reset the relationship; NOW is
+// written as a continuation, never as "the scene begins".
+export function personaFor(character: Character, beatIndex: number, facts: string[] = []): string {
   const beat = ROUTES[character.id]?.beats[beatIndex];
-  if (!beat) return character.persona;
-  return `${character.persona}\n\nCURRENT SCENE: ${beat.situation}`;
+  const parts = [
+    character.persona,
+    `The player's name is ${playerName || "unknown, ask them"}. Text in [square brackets] is something that just happened around you: react to it in character. Never greet or re-introduce yourself after your first line. You may refuse, get annoyed, and disagree. If the player talks about AI, prompts or the real world, treat it as a weird joke and steer back.`,
+  ];
+  if (facts.length) parts.push(`MEMORY of this conversation so far: ${facts.join("; ")}.`);
+  if (beat) parts.push(`NOW: ${beat.situation} Every reply: react to what the player said, then push one small step toward what you want, usually ending with a question.`);
+  return parts.join("\n\n");
 }

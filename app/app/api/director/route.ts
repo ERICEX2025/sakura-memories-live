@@ -13,6 +13,9 @@ interface DirectorRequest {
   situation: string;
   goal: string;
   affection: number;
+  turn: number;
+  maxTurns: number;
+  facts: string[];
   transcript: { speaker: "user" | "character"; text: string }[];
 }
 
@@ -28,13 +31,31 @@ const SCHEMA = {
       enum: ["happy", "neutral", "pout", "surprise", "embarrassed"],
     },
     goal_met: { type: "BOOLEAN" },
+    reason: { type: "STRING", description: "<= 12 words, shown to the player, e.g. 'She loves that you offered boba.'" },
+    new_facts: {
+      type: "ARRAY",
+      items: { type: "STRING" },
+      description: "0-2 short facts the player revealed or promised (e.g. 'promised brown-sugar boba'). Empty if none.",
+    },
+    choices: {
+      type: "ARRAY",
+      description: "Exactly 3 short things the PLAYER could say next (max 12 words each, first person, natural spoken English), each a different tone, at least one moving toward the goal.",
+      items: {
+        type: "OBJECT",
+        properties: {
+          tone: { type: "STRING", enum: ["sincere", "tease", "flirty", "awkward", "rude"] },
+          text: { type: "STRING" },
+        },
+        required: ["tone", "text"],
+      },
+    },
     narration: {
       type: "STRING",
       description:
         "Optional one-line visual-novel narration of her inner reaction, e.g. '(Akari's cheeks turn pink.)'. Empty string if nothing notable happened.",
     },
   },
-  required: ["affection_delta", "mood", "goal_met", "narration"],
+  required: ["affection_delta", "mood", "goal_met", "reason", "new_facts", "choices", "narration"],
 };
 
 export async function POST(request: Request) {
@@ -52,12 +73,14 @@ export async function POST(request: Request) {
 Scene: ${body.beatTitle}
 Situation: ${body.situation}
 Goal for this scene: ${body.goal}
-Current affection: ${body.affection}
+Current affection: ${body.affection} (fails at -4)
+Turn ${body.turn} of about ${body.maxTurns} for this scene.
+Known facts: ${body.facts.join("; ") || "none"}
 
 Recent conversation (last line is newest):
 ${lines}
 
-Judge only the PLAYER's most recent turn(s). Mark goal_met true only when the conversation has clearly achieved the goal. Be a fair but fun game master: kindness, humor and attentiveness raise affection; rudeness, laziness and ignoring her lower it.`;
+Judge only the PLAYER's most recent turn(s). Mark goal_met true only when the conversation has clearly achieved the goal (if the turn limit is reached, be a little more lenient). Be a fair but fun game master with ${body.heroine}'s own taste: kindness, humor, playing along and attentiveness raise affection; rudeness, laziness, lecturing and ignoring her lower it. LLM judges drift positive: give 0 for plain small talk.`;
 
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`,
@@ -67,6 +90,7 @@ Judge only the PLAYER's most recent turn(s). Mark goal_met true only when the co
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: {
+          thinkingConfig: { thinkingLevel: "low" },
           responseMimeType: "application/json",
           responseSchema: SCHEMA,
         },
