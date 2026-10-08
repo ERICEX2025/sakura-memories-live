@@ -106,7 +106,9 @@ export function CallScreen({
         ? `Preparing ${plate.en}…`
         : !showVideo && active
           ? phaseLine(snapshot)
-          : null;
+          : phase === "ended" && !ending
+            ? phaseLine(snapshot)
+            : null;
 
   function send(text: string) {
     if (!text.trim() || !live) return;
@@ -176,7 +178,7 @@ export function CallScreen({
             <span className="opacity-70">{live ? `LIVE ${clock(elapsed)}` : active ? "Connecting" : "Calling"}</span>
           </div>
           {caption && <div className="call-caption">{caption}</div>}
-          {notice && !active && busy === null && character && (
+          {notice && !active && !startable && busy === null && character && (
             <button className="call-btn absolute top-12 left-1/2 -translate-x-1/2" onClick={() => session.chooseCharacter(character)}>
               ↻ Retry
             </button>
