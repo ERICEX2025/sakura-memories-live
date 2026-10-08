@@ -20,7 +20,16 @@ const HALF_AT = 0.018;
 const OPEN_AT = 0.06;
 const CLOSE_HOLD_MS = 90;
 
-export function SpriteAvatar({ heroine, className = "" }: { heroine: HeroineId; className?: string }) {
+export function SpriteAvatar({
+  heroine,
+  background,
+  className = "",
+}: {
+  heroine: HeroineId;
+  /** The chapter's painted scene, shown behind her cut-out frames. */
+  background?: string;
+  className?: string;
+}) {
   const voice = useViduS2AvatarTrack("main_audio");
   const [frame, setFrame] = useState<Frame>("closed");
   const [talking, setTalking] = useState(false);
@@ -86,16 +95,19 @@ export function SpriteAvatar({ heroine, className = "" }: { heroine: HeroineId; 
   }, []);
 
   return (
-    <div className={`sprite-avatar ${talking ? "is-talking" : ""} ${className}`}>
+    <div className={`sprite-scene ${className}`}>
+      {background && <img key={background} src={background} alt="" className="sprite-bg vn-fade" />}
+      <div className={`sprite-avatar ${talking ? "is-talking" : ""}`}>
       {FRAMES.map((name) => (
         <img
           key={name}
-          src={`/characters/sakura/frames/${heroine}_${name}.jpg`}
+          src={`/characters/sakura/frames/${heroine}_${name}.webp`}
           alt=""
           className={name === frame ? "opacity-100" : "opacity-0"}
           draggable={false}
         />
       ))}
+      </div>
     </div>
   );
 }

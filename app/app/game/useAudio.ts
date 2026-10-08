@@ -19,7 +19,15 @@ export function useAudio() {
     const next = new Audio(src);
     next.loop = true;
     next.volume = 0;
-    void next.play().catch(() => {});
+    void next.play().catch(() => {
+      // Autoplay blocked (e.g. the title screen before any click): start on
+      // the first click or key press instead.
+      const resume = () => {
+        if (music.current === next) void next.play().catch(() => {});
+      };
+      window.addEventListener("pointerdown", resume, { once: true });
+      window.addEventListener("keydown", resume, { once: true });
+    });
     fadeTo(next, volume);
     music.current = next;
   }, []);

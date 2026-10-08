@@ -164,7 +164,9 @@ export function CallScreen({
               className={`absolute inset-0 h-full w-full ${showVideo && view === "video" ? "" : "invisible"}`}
             />
           )}
-          {showVideo && view === "sprite" && <SpriteAvatar heroine={heroine} />}
+          {showVideo && view === "sprite" && (
+            <SpriteAvatar heroine={heroine} background={beat ? paintedOf(beat.background) : undefined} />
+          )}
           {!showVideo && photo && (
             <img src={photo.url} alt="" className="absolute inset-0 h-full w-full object-cover" />
           )}
