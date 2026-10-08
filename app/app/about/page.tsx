@@ -4,6 +4,29 @@ import path from "node:path";
 import type { Metadata } from "next";
 import "./about.css";
 
+const CLIPS = [
+  {
+    src: "/about/clip1-visual-novel.mp4",
+    title: "1 · The original visual novel",
+    caption: "Chapters 1–2 play like the 2023 Ren'Py game: bilingual script, original art and music, Tatsumi-sensei in a Gemini-designed voice.",
+  },
+  {
+    src: "/about/clip2-the-call.mp4",
+    title: "2 · She picks up, at the Rock",
+    caption: "A live Reactor avatar in a LingBot world of Brown's Rockefeller Library. Offer boba and the director moves the story to Tiger Sugar on Thayer.",
+  },
+  {
+    src: "/about/clip3-the-walk.mp4",
+    title: "3 · Walking to Providence Place",
+    caption: "WASD through a world generated from the original street photo, with Akari on the call. What you say reshapes the world.",
+  },
+  {
+    src: "/about/clip4-the-ending.mp4",
+    title: "4 · A Sakura Memory",
+    caption: "Providence Place as a live world, her goodbye, and a polaroid of the two of you drawn by Nano Banana.",
+  },
+];
+
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
@@ -196,15 +219,26 @@ export default function AboutPage() {
           </ul>
         </section>
 
-        {/* ── Walkthrough (optional) ── */}
-        {hasGif && (
-          <section className="about-wrap about-section">
-            <div className="about-gif-card">
-              <h2 className="about-h3">Walkthrough (sped up)</h2>
-              <img src="/about/walkthrough.gif" alt="Sped-up walkthrough of Sakura Memories Live" />
-            </div>
-          </section>
-        )}
+        {/* ── Gameplay clips ── */}
+        <section className="about-wrap about-section">
+          <h2 className="about-h2">See it play</h2>
+          <div className="about-clips">
+            {CLIPS.map((clip) => (
+              <figure key={clip.src} className="about-clip">
+                <video src={clip.src} autoPlay loop muted playsInline preload="metadata" />
+                <figcaption>
+                  <b>{clip.title}</b>
+                  <span>{clip.caption}</span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+          {hasGif && (
+            <p className="about-clips-note">
+              Or the whole thing at once: <a href="/about/walkthrough.gif">sped-up walkthrough (GIF)</a>
+            </p>
+          )}
+        </section>
 
         {/* ── How it works ── */}
         <section className="about-wrap about-section">
